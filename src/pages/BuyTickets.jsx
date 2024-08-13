@@ -9,10 +9,11 @@ import {
   findAllTransactions,
 } from "../services/transaction.service";
 import CryptoJS from "crypto-js";
+import { findValidationInEvent } from "../services/validation.service";
 
 const BuyTickets = () => {
   const param = useParams();
-  console.log("eventIdParam:", param.eventIdParam);
+  // console.log("eventIdParam:", param.eventIdParam);
   const [selected, setSelected] = useState({
     id: "",
     price: 0,
@@ -57,8 +58,8 @@ const BuyTickets = () => {
     setCargoServicio(total * 0.1);
   }, [ticketsCart, cargoServicio]);
 
-  console.log("🚀 ~ BuyTickets ~ total:", total);
-  console.log("🚀 ~ BuyTickets ~ cargoServicio:", cargoServicio);
+  // console.log("🚀 ~ BuyTickets ~ total:", total);
+  // console.log("🚀 ~ BuyTickets ~ cargoServicio:", cargoServicio);
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 760);
@@ -73,7 +74,7 @@ const BuyTickets = () => {
   const getEvent = async () => {
     try {
       const response = await findEvent(param.eventIdParam);
-      console.log("GetTheEvent - Success:", response);
+      // console.log("GetTheEvent - Success:", response);
       if (response.success) {
         setEvent(response.event);
       }
@@ -88,17 +89,27 @@ const BuyTickets = () => {
       if (response.success) {
         setTransactionLength(response.transactions.length);
       }
-      console.log("GetTheTransactions - Sucess:", response);
+      // console.log("GetTheTransactions - Sucess:", response);
     } catch (error) {
       console.error("GetTheTransactions - Error:", error.response);
     }
   };
 
-  console.log("Transactions:", transactionLength);
+  // console.log("Transactions:", transactionLength);
+
+  const getValidation = async () => {
+    try {
+      const response = await findValidationInEvent(param.eventIdParam);
+      console.log("Validation Object:", response);
+    } catch (error) {
+      console.error("Get Validatin Error:", error.response);
+    }
+  };
 
   useEffect(() => {
     getEvent();
     getAllTransaction();
+    getValidation();
   }, []);
 
   const handleAddToCart = () => {
@@ -126,7 +137,7 @@ const BuyTickets = () => {
       (total + cargoServicio).toFixed(2).replace(".", ""),
       "000",
       `https://localhost:5173/approved/${param.eventIdParam}/${transactionId}`,
-      "https://google.com",
+      "https://instagram.com",
       "https://google.com",
       "1",
       "ticketsAmount",
@@ -193,14 +204,12 @@ const BuyTickets = () => {
     }
   };
 
-  console.log("transactionId:", transactionId);
+  // console.log("transactionId:", transactionId);
 
   const handleInputChange = (e) => {
     const { value } = e.target;
     setEmail((prevEmail) => value);
   };
-
- 
 
   return (
     <div>
@@ -459,7 +468,7 @@ const BuyTickets = () => {
               type="hidden"
               id="DeclinedUrl"
               name="DeclinedUrl"
-              value="https://google.com"
+              value="https://instagram.com"
             />
             <input
               type="hidden"
@@ -519,9 +528,7 @@ const BuyTickets = () => {
             />
           </form>
         </div>
-        
 
-        
         <h1 className="checkout-cancel" onClick={() => setCheckoutTab(false)}>
           Cancel
         </h1>

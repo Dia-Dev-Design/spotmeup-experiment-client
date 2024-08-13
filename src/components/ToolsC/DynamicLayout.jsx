@@ -21,7 +21,7 @@ const DynamicLayout = ({
     try {
       const response = await getOneLayout(layoutId);
       if (response.success) {
-        console.log("GetOneLayout - Response:", response);
+        // console.log("GetOneLayout - Response:", response);
         setlayoutObject(response.layout);
       }
     } catch (error) {

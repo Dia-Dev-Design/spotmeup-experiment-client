@@ -18,7 +18,7 @@ const EventDetails = () => {
       if (response.success) {
         setEvent(response.event);
       }
-      console.log("GetThisEvent - Response:", response);
+      // console.log("GetThisEvent - Response:", response);
     } catch (error) {
       console.error("GetThisEvent - Error:", error.response);
     }
@@ -49,7 +49,7 @@ const EventDetails = () => {
   };
 
 
-  console.log("Accepted:", acceppted);
+  // console.log("Accepted:", acceppted);
 
   useEffect(() => {
     getThisEvent();

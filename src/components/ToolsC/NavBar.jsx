@@ -20,7 +20,12 @@ const NavBar = () => {
 
   const removeToken = () => {
     console.log("Token Removed");
+    localStorage.removeItem("authToken");
+    authenticateUser(); // Llamar a la función de autenticación para actualizar el estado
+  };
 
+  const handleLogout = () => {
+    removeToken();
   };
 
   return (
@@ -109,7 +114,7 @@ const NavBar = () => {
             {/* <div className="nav-user-img"></div> */}
             <h1
               className="login-signup-navtext"
-              onClick={isLoggedIn ? removeToken() : ""}
+              // onClick={isLoggedIn ? removeToken() : ""}
             >
               {isLoggedIn ? "Log Out" : "Log In or Sign Up"}
             </h1>
