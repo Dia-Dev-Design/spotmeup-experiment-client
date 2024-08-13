@@ -5,6 +5,8 @@ import EventDetails from "./pages/EventDetails.jsx";
 import BuyTickets from "./pages/BuyTickets.jsx";
 import Approved from "./pages/Approved.jsx";
 import ScanningTool from "./pages/ScanningTool.jsx";
+import MustLogin from "./components/LogInC/MustLogin.jsx";
+import { NavItem } from "react-bootstrap";
 // import SignUp from "./pages/SignUp";
 // import LogIn from "./pages/LogIn";
 // import Home from "./pages/Home";
@@ -34,53 +36,63 @@ function App() {
     return localStorage.getItem("authToken");
   };
 
-  const removeToken = () => {
-    return localStorage.removeItem("authToken");
-  };
-
   const NotLoggedIn = () => {
     return !getToken() ? <Outlet /> : <Navigate to="/login" />;
+  };
+
+  const RequireAuth = () => {
+    const getToken = () => {
+      return localStorage.getItem("authToken");
+    };
+
+    return getToken() ? <Outlet /> : <Navigate to="/must-login" />;
   };
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
+        <Route element={<NotLoggedIn />}>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<LogIn />} />
+          <Route path="/must-login" element={<MustLogin />} />
           <Route path="/about" element={<About />} />
           <Route path="/" element={<Home />} />
-        <Route element={<NotLoggedIn />}>
         </Route>
 
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/myevents" element={<MyEvents />} />
-        <Route
-          path="/admin/venuedetails/:venueIdParam"
-          element={<AdminVenueDetail />}
-        />
-        <Route
-          path="/admin/designpage/:layoutIdParam"
-          element={<DesignPage />}
-        />
-        <Route
-          path="/admin/designpage/:layoutIdParam/:blockIdParam"
-          element={<DesignPage />}
-        />
-        <Route
-          path="/admin/designpage/:layoutIdParam/breakdown"
-          element={<DesignBreakDown />}
-        />
-        <Route
-          path="/admin/designpage/EventBreakDown/:eventIdParam/:layoutIdParam"
-          element={<EventBreakDown />}
-        />
-        <Route path="/event-details/:eventIdParam" element={<EventDetails />} />
-        <Route path="/event-tickets/:eventIdParam" element={<BuyTickets />} />
+        <Route element={<RequireAuth />}>
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/myevents" element={<MyEvents />} />
+          <Route
+            path="/admin/venuedetails/:venueIdParam"
+            element={<AdminVenueDetail />}
+          />
+          <Route
+            path="/admin/designpage/:layoutIdParam"
+            element={<DesignPage />}
+          />
+          <Route
+            path="/admin/designpage/:layoutIdParam/:blockIdParam"
+            element={<DesignPage />}
+          />
+          <Route
+            path="/admin/designpage/:layoutIdParam/breakdown"
+            element={<DesignBreakDown />}
+          />
+          <Route
+            path="/admin/designpage/EventBreakDown/:eventIdParam/:layoutIdParam"
+            element={<EventBreakDown />}
+          />
+          <Route
+            path="/event-details/:eventIdParam"
+            element={<EventDetails />}
+          />
+          <Route path="/event-tickets/:eventIdParam" element={<BuyTickets />} />
 
-        <Route
-          path="/approved/:eventIdParam/:transactionIdParam"
-          element={<Approved />}
-        />
+          <Route
+            path="/approved/:eventIdParam/:transactionIdParam"
+            element={<Approved />}
+          />
+        </Route>
         <Route path="/scannig-tool/:eventIdParam" element={<ScanningTool />} />
       </Routes>
     </Suspense>

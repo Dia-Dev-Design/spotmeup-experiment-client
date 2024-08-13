@@ -41,16 +41,19 @@ body {
   -webkit-text-stroke: 0.2px #231f20;
   text-shadow: 4px 5px 1px var(--black);
   padding: 0;
-  margin: 0 2rem;
-  width: auto;
+  margin: 0 0;
+  padding-left: 2rem;
+  width: 100vw;
   cursor: url("./assets/icons/cursor.png"), default;
+  background-color: var(--green);
+  
 }
 
 .spotmeup-text {
   display: flex;
   flex-direction: column;
   width: 35%;
-  margin-top: 3rem;
+  /* margin-top: 3rem; */
 }
 
 .spotmeup-text:hover > h1 {
@@ -161,6 +164,8 @@ button:hover {
   display: flex;
   flex-direction: column;
   align-items: end;
+  background-color: var(--green);
+  height: 100vh;
 }
 
 .login-form-smaller-container {
@@ -7010,4 +7015,30 @@ input[type="color"]::-webkit-color-swatch {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.must-login-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  padding-top: 15rem;
+  background-color: var(--green);
+  height: 100vh;
+}
+
+.prompt-login-navigate {
+  color: white;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  position: absolute;
+  left: 2%;
+  top: 3%;
+  font-size: 4rem;
+}
+
+@media (max-width: 760px) {
+  .prompt-login-navigate {
+    font-size: 2.5rem;
+    left: 6%;
+    top: 6%;
+  }
 }
