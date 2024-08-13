@@ -1,11 +1,27 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SpotMeUpIcon from "./SpotMeUpIcon";
 import { AuthContext } from "../../context/auth.context";
+import { authenticateUser } from "../../services/auth.service";
 
 const NavBar = () => {
   const navigate = useNavigate();
   const { isLoggedIn } = useContext(AuthContext);
+
+  const userValidation = async () => {
+    try {
+      const response = await authenticateUser();
+      console.log("authenticate user:", response);
+    } catch (error) {
+      console.log("Authenticate User Error:", error);
+    }
+  };
+
+
+  const removeToken = () => {
+    console.log("Token Removed");
+
+  };
 
   return (
     <nav className="navbar-container">
@@ -91,7 +107,10 @@ const NavBar = () => {
         <div className="nav-img-container log-link">
           <Link to={isLoggedIn ? "/" : "/signup"} className="navlink-signup">
             {/* <div className="nav-user-img"></div> */}
-            <h1 className="login-signup-navtext">
+            <h1
+              className="login-signup-navtext"
+              onClick={isLoggedIn ? removeToken() : ""}
+            >
               {isLoggedIn ? "Log Out" : "Log In or Sign Up"}
             </h1>
           </Link>

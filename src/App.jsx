@@ -7,17 +7,6 @@ import Approved from "./pages/Approved.jsx";
 import ScanningTool from "./pages/ScanningTool.jsx";
 import MustLogin from "./components/LogInC/MustLogin.jsx";
 import { NavItem } from "react-bootstrap";
-// import SignUp from "./pages/SignUp";
-// import LogIn from "./pages/LogIn";
-// import Home from "./pages/Home";
-// import About from "./pages/About";
-// import Profile from "./pages/Profile";
-// import MyEvents from "./pages/MyEvents";
-// import AdminVenueDetail from "./pages/AdminVenueDetail";
-// import DesignPage from "./pages/DesignPage";
-// import DesignBreakDown from "./pages/DesignBreakDown";
-// import BDTickets from "./components/BreakDown/BDTickets";
-// import 'bootstrap/dist/css/bootstrap.min.css';
 
 const SignUp = lazy(() => import("./pages/SignUp"));
 const LogIn = lazy(() => import("./pages/LogIn"));
@@ -37,11 +26,12 @@ function App() {
   };
 
   const NotLoggedIn = () => {
-    return !getToken() ? <Outlet /> : <Navigate to="/login" />;
+    return !getToken() ? <Navigate to="/must-login" /> : <Outlet />;
   };
 
   const RequireAuth = () => {
     const getToken = () => {
+      // console.log("Token:" localStorage.getItem("authToken"));
       return localStorage.getItem("authToken");
     };
 
@@ -54,10 +44,11 @@ function App() {
         <Route element={<NotLoggedIn />}>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<LogIn />} />
-          <Route path="/must-login" element={<MustLogin />} />
           <Route path="/about" element={<About />} />
           <Route path="/" element={<Home />} />
         </Route>
+
+        <Route path="/must-login" element={<MustLogin />} />
 
         <Route element={<RequireAuth />}>
           <Route path="/profile" element={<Profile />} />
