@@ -49,7 +49,7 @@ const NavBar = () => {
             </svg>
           </Link>
 
-          <Link to="/myevents" className="navlink">
+          <Link to={isLoggedIn ? "/myevents" : "/signup"} className="navlink">
             Promoters
           </Link>
         </div>

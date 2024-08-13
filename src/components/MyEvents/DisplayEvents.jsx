@@ -90,7 +90,7 @@ const DisplayEvents = () => {
               }}
             >
               <div className="event-slide">
-                {event.images.length && console.log("Image Event:", event)}
+                {/* {event.images.length && console.log("Image Event:", event)} */}
                 <div
                   style={{
                     backgroundImage: `url(${

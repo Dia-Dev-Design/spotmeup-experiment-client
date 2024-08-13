@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import NavBar from "../components/ToolsC/NavBar";
 import { findEvent } from "../services/events.service";
 import { useParams, useNavigate } from "react-router-dom";
 import DynamicLayout from "../components/ToolsC/DynamicLayout";
+import { AuthContext } from "../context/auth.context";
 
 const EventDetails = () => {
   const param = useParams();
   const navigate = useNavigate();
+  const {isLoggedIn} = useContext(AuthContext)
   const [event, setEvent] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 760);
 
@@ -31,15 +33,21 @@ const EventDetails = () => {
   const [message, setMessage] = useState(null);
 
   const moveToDetails = async (eventId) => {
-    if (acceppted) {
-      navigate(`/event-tickets/${eventId}`);
-    } else {
+    if(!isLoggedIn) {
+      setMessage("You must be logged in to proceed.")
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000);
+    } else if (!acceppted){
       setMessage("Term & Conditions Must Be Accepted");
       setTimeout(() => {
-        setMessage(null);
+        setMessage(null)
       }, 3000);
+    } else {
+      navigate(`/event-tickets/${eventId}`);
     }
   };
+
 
   console.log("Accepted:", acceppted);
 

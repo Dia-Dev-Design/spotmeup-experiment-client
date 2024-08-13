@@ -200,6 +200,8 @@ const BuyTickets = () => {
     setEmail((prevEmail) => value);
   };
 
+ 
+
   return (
     <div>
       <NavBar />

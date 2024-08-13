@@ -30,13 +30,28 @@ const BDTickets = lazy(() => import("./components/BreakDown/BDTickets"));
 const EventBreakDown = lazy(() => import("./pages/EventBreakDown.jsx"));
 
 function App() {
+  const getToken = () => {
+    return localStorage.getItem("authToken");
+  };
+
+  const removeToken = () => {
+    return localStorage.removeItem("authToken");
+  };
+
+  const NotLoggedIn = () => {
+    return !getToken() ? <Outlet /> : <Navigate to="/login" />;
+  };
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<LogIn />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<LogIn />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/" element={<Home />} />
+        <Route element={<NotLoggedIn />}>
+        </Route>
+
         <Route path="/profile" element={<Profile />} />
         <Route path="/myevents" element={<MyEvents />} />
         <Route
