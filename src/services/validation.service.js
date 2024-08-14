@@ -11,3 +11,14 @@ export const findValidationInEvent = async (eventId) => {
     throw error;
   }
 };
+
+export const updateValidationStatus = async (transactionId) => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/validation/update-validation/${transactionId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

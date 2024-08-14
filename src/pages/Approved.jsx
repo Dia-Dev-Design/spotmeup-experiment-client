@@ -8,6 +8,7 @@ import { findTransaction } from "../services/transaction.service";
 import { createTicket } from "../services/ticket.service";
 import { getAllTicketInTransaction } from "../services/ticket.service";
 import { sendEmailTickets } from "../services/ticket.service";
+import { updateValidationStatus } from "../services/validation.service";
 
 const Approved = () => {
   const param = useParams();
@@ -19,6 +20,7 @@ const Approved = () => {
   const [transaction, setTransaction] = useState(null);
   const [ableToGenerate, setAbleToGenerate] = useState(false);
   const [tickets, setTickets] = useState(null);
+  const [ticketsCreated, setticketsCreated] = useState(false);
 
   //   console.log("🚀 ~ Approved ~ ticketsCart:", ticketsCart);
 
@@ -100,6 +102,20 @@ const Approved = () => {
         if (response.tickets.length > 0) {
           setTickets(response.tickets);
           setAbleToGenerate(false);
+          // setticketsCreated(true);
+          // if (ticketsCreated) {
+          try {
+            const response = await updateValidationStatus(
+              param.transactionIdParam
+            );
+
+            if (response.success) {
+              console.log("Validation Updated:", response.validation);
+            }
+          } catch (error) {
+            console.error("Validation Error:", error.response);
+          }
+          // }
           console.log(
             `There are ${response.tickets.length} tickets already created`
           );
@@ -159,8 +175,10 @@ const Approved = () => {
           console.log("Ticket creado:", ticketObject);
         }
       }
+
       console.log("----------------------------------");
       console.log("All tickets created successfully.");
+
       await findTicketInTransaction();
     } catch (error) {
       console.error("Error creating tickets:", error);
@@ -236,7 +254,11 @@ const Approved = () => {
           <h1>{event?.address?.street}</h1>
           <h1>{formatTime(event?.time)}</h1>
         </div>
-        <div className={tickets?.length <= 2 ? "qr-code-container-two" : "qr-code-container"}>
+        <div
+          className={
+            tickets?.length <= 2 ? "qr-code-container-two" : "qr-code-container"
+          }
+        >
           {tickets?.map((ticket, index) => (
             <div>
               <QRCode
