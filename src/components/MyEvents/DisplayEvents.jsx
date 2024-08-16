@@ -17,9 +17,9 @@ const DisplayEvents = () => {
     navigate(`/admin/designpage/EventBreakDown/${eventId}/${eventLayout}`);
   };
 
-  const toggleChangePage = (eventId) => {
+  const toggleChangePage = (eventId, eventLayout) => {
     setEventId(eventId);
-    changePage(eventId);
+    changePage(eventId, eventLayout);
   };
 
   useEffect(() => {
@@ -84,9 +84,10 @@ const DisplayEvents = () => {
             <SwiperSlide
               key={event._id}
               onClick={() => {
-                toggleChangePage(event._id, event?.layout?._id);
+                toggleChangePage(event._id, event?.layout);
                 // setEventLayout(event?.layout?._id);
-                console.log("Display This Event:", event);
+                // console.log("Display This Event:", event);
+                // console.log("Display This LayoutId:", event.layout);
               }}
             >
               <div className="event-slide">
