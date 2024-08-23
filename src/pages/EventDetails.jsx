@@ -5,10 +5,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import DynamicLayout from "../components/ToolsC/DynamicLayout";
 import { AuthContext } from "../context/auth.context";
 
+import calendarIcon from '../assets/calendar_icon.svg'
+import destinationMarker from '../assets/destination_marker.svg'
+import timeIcon from "../assets/time_icon.svg"
+
 const EventDetails = () => {
   const param = useParams();
   const navigate = useNavigate();
-  const {isLoggedIn} = useContext(AuthContext)
+  const { isLoggedIn } = useContext(AuthContext);
   const [event, setEvent] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 760);
 
@@ -26,28 +30,32 @@ const EventDetails = () => {
 
   const [acceppted, setAcceppted] = useState(false);
 
-  const handleAccept = async () => {
+  const handleAccept = () => {
+    console.log("We are accepting or not!!!!!!!")
     setAcceppted((prev) => !prev);
+
+    //must send message to backend relating that they have accepted the terms, possibly to be relayed to bank as well
+
+
   };
 
   const [message, setMessage] = useState(null);
 
   const moveToDetails = async (eventId) => {
-    if(!isLoggedIn) {
-      setMessage("You must be logged in to proceed.")
+    if (!isLoggedIn) {
+      setMessage("You must be logged in to proceed.");
       setTimeout(() => {
-        setMessage(null)
+        setMessage(null);
       }, 3000);
-    } else if (!acceppted){
+    } else if (!acceppted) {
       setMessage("Term & Conditions Must Be Accepted");
       setTimeout(() => {
-        setMessage(null)
+        setMessage(null);
       }, 3000);
     } else {
       navigate(`/event-tickets/${eventId}`);
     }
   };
-
 
   // console.log("Accepted:", acceppted);
 
@@ -119,7 +127,11 @@ const EventDetails = () => {
               <h1 className="event-details-title">{event.name}</h1>
               <div className="event-details-container-two">
                 <div className="event-details-group">
-                  <svg
+
+
+                  <img src={destinationMarker} alt='destination marker' />
+
+                  {/* <svg
                     width="13"
                     height="18"
                     viewBox="0 0 13 18"
@@ -140,14 +152,17 @@ const EventDetails = () => {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
-                  </svg>
+                  </svg> */}
                   <h1 className="normalize-font">
                     {event.address.city} - {event.address.state}
                   </h1>
                 </div>
 
                 <div className="event-details-group">
-                  <svg
+
+                  <img src={calendarIcon} alt='calendar icon' />
+
+                  {/* <svg
                     width="16"
                     height="17"
                     viewBox="0 0 16 17"
@@ -174,12 +189,15 @@ const EventDetails = () => {
                         />
                       </clipPath>
                     </defs>
-                  </svg>
+                  </svg> */}
 
                   <h1 className="normalize-font">{formatDate(event.date)}</h1>
                 </div>
                 <div className="event-details-group">
-                  <svg
+
+                    <img src={timeIcon} alt='time icon' />
+
+                  {/* <svg
                     width="24"
                     height="24"
                     viewBox="0 0 24 24"
@@ -195,7 +213,7 @@ const EventDetails = () => {
                       stroke="black"
                       stroke-linecap="round"
                     />
-                  </svg>
+                  </svg> */}
                   <h1 className="normalize-font">{formatTime(event.time)}</h1>
                 </div>
                 <h1 className="normalize-font">{event?.description}</h1>
@@ -221,61 +239,68 @@ const EventDetails = () => {
             )}
           </div>
           <hr className="term-conditions-hr" />
-          <div className="event-terms-conditions-container">
-            <h1 className="event-li-title">Política De Reembolso</h1>
-            <ul>
-              <li className="event-li-terms">
-                Los reembolsos estarán disponibles únicamente si el promotor
-                cancela el evento debido a causas mayores.
-              </li>
-              <li className="event-li-terms">
-                No se otorgarán reembolsos por cargos de servicio.
-              </li>
-              <li className="event-li-terms">
-                Para solicitar un reembolso en caso de cancelación por causas
-                mayores, envíe un correo electrónico a soporte@spotmeup.com con
-                el ID de la orden y los detalles del evento.
-              </li>
-            </ul>
-            <h1 className="event-li-title">Política De Devoluciones</h1>
-            <ul>
-              <li className="event-li-terms">
-                Las devoluciones se realizarán automáticamente dentro de los 5
-                días laborables una vez se haya determinado que la actividad
-                tiene un motivo válido para cancelar.
-              </li>
-              <li className="event-li-terms">
-                En caso de cancelación del evento por un motivo válido, los
-                tickets serán reembolsados automáticamente al método de pago
-                original.
-              </li>
-              <li className="event-li-terms">
-                Si un evento es reprogramado, los tickets serán válidos para la
-                nueva fecha. Si no puede asistir a la nueva fecha, puede
-                solicitar un reembolso dentro de los 14 días posteriores al
-                anuncio de la reprogramación.
-              </li>
-            </ul>
-            <h1 className="event-li-title">Política de Cancelación</h1>
-            <ul>
-              <li className="event-li-terms">
-                Una vez comprado el ticket, el usuario no puede cancelar su
-                compra.
-              </li>
-              <li className="event-li-terms">
-                Si el promotor cancela el evento por una razón válida, se le
-                reembolsará el dinero dentro de 5 días laborables.
-              </li>
-              <li className="event-li-terms">
-                Para más información o asistencia, contacte a nuestro equipo de
-                soporte en soporte@spotmeup.com.
-              </li>
-            </ul>
-            <label htmlFor="checkbox" className="event-li-terms">
-              Acepto Los Terminos & Condiciones
-            </label>
-            <input type="checkbox" name="check" onClick={handleAccept} />
-          </div>
+
+          {
+            !acceppted &&
+
+              <div className="event-terms-conditions-container">
+                <h1 className="event-li-title">Política De Reembolso</h1>
+                <ul>
+                  <li className="event-li-terms">
+                    Los reembolsos estarán disponibles únicamente si el promotor
+                    cancela el evento debido a causas mayores.
+                  </li>
+                  <li className="event-li-terms">
+                    No se otorgarán reembolsos por cargos de servicio.
+                  </li>
+                  <li className="event-li-terms">
+                    Para solicitar un reembolso en caso de cancelación por causas
+                    mayores, envíe un correo electrónico a soporte@spotmeup.com con
+                    el ID de la orden y los detalles del evento.
+                  </li>
+                </ul>
+                <h1 className="event-li-title">Política De Devoluciones</h1>
+                <ul>
+                  <li className="event-li-terms">
+                    Las devoluciones se realizarán automáticamente dentro de los 5
+                    días laborables una vez se haya determinado que la actividad
+                    tiene un motivo válido para cancelar.
+                  </li>
+                  <li className="event-li-terms">
+                    En caso de cancelación del evento por un motivo válido, los
+                    tickets serán reembolsados automáticamente al método de pago
+                    original.
+                  </li>
+                  <li className="event-li-terms">
+                    Si un evento es reprogramado, los tickets serán válidos para la
+                    nueva fecha. Si no puede asistir a la nueva fecha, puede
+                    solicitar un reembolso dentro de los 14 días posteriores al
+                    anuncio de la reprogramación.
+                  </li>
+                </ul>
+                <h1 className="event-li-title">Política de Cancelación</h1>
+                <ul>
+                  <li className="event-li-terms">
+                    Una vez comprado el ticket, el usuario no puede cancelar su
+                    compra.
+                  </li>
+                  <li className="event-li-terms">
+                    Si el promotor cancela el evento por una razón válida, se le
+                    reembolsará el dinero dentro de 5 días laborables.
+                  </li>
+                  <li className="event-li-terms">
+                    Para más información o asistencia, contacte a nuestro equipo de
+                    soporte en soporte@spotmeup.com.
+                  </li>
+                </ul>
+                <label htmlFor="checkbox" className="event-li-terms">
+                  Acepto Los Terminos & Condiciones
+                </label>
+                <input type="checkbox" name="check" onClick={handleAccept} />
+              </div>
+
+
+          }
         </div>
       </div>
       <h1 className="event-details-preview">Preview</h1>

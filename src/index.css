@@ -6871,6 +6871,14 @@ input[type="color"]::-webkit-color-swatch {
   height: 200px;
 }
 
+.qr-seperator {
+  height: 200px;
+  width: 1px;
+  background-color: black;
+  border: 1px solid black;
+  margin: 0 1px
+}
+
 .email-container-buytickets {
   display: flex;
   flex-direction: column;

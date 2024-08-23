@@ -30,9 +30,9 @@ const BuyTickets = () => {
   const [checkoutTab, setCheckoutTab] = useState(false);
   const [total, setTotal] = useState(0);
   const [cargoServicio, setCargoServicio] = useState(0);
-  const [transactionLength, setTransactionLength] = useState(null);
-  const [transactionId, setTransactionId] = useState(null);
-  const [email, setEmail] = useState(null);
+  const [transactionLength, setTransactionLength] = useState(0);
+  const [transactionId, setTransactionId] = useState("");
+  const [email, setEmail] = useState("");
 
   const handleCheckoutTab = () => {
     setCheckoutTab((prev) => !prev);
@@ -123,15 +123,30 @@ const BuyTickets = () => {
     console.log("Adding to cart Dustin:", selected);
     let newCartTickets = [...ticketsCart, selected]
     setTicketsCart(newCartTickets);
-    setSelected({ id: "", price: 0 });
-  };
-
-  const handleRemoveFromCart = (id) => {
-    setTicketsCart((prevTicketsCart) => {
-      const updatedCart = prevTicketsCart.filter((ticket) => ticket.id !== id);
-      return updatedCart;
+    setSelected({
+      id: "",
+      price: 0,
+      hasTables: false,
+      maxTickets: 1,
+      name: "",
+      tixToGenerate: 1,
+      blockId: "",
+      tixIncluded: 0,
     });
   };
+
+  const handleRemoveFromCart = (index) => {
+    const newTickets = ticketsCart.filter((ticket, i) => i !== index)
+    console.log("This is the tickets lenght", newTickets.length)
+    setTicketsCart(newTickets);
+  };
+
+  const addQuantityToTicket = (ticketId) => {
+    let thisTicket = ticketsCart.find((ticket, i) => ticket.id === ticketId)
+    let updatedTickets = [...ticketsCart, thisTicket]
+    setTicketsCart(updatedTickets)
+    console.log("WE've found a Ticket!!!!", thisTicket)
+  } 
 
   const calculateAuthHash = () => {
     const secretKey =
@@ -313,17 +328,25 @@ const BuyTickets = () => {
                   >
                     <h1 className="ticket-selected-form">{ticket.name}</h1>
                     <h1>{ticket.tixIncluded}</h1>
-                    <h1>0</h1>
+                    {
+                      ticket.name === "General Area" ? 
+
+                        <h1>{ticketsCart.reduce((a, b) => a + b.tixToGenerate, 0)}</h1>
+
+                        :
+
+                        <h1>{ticket.tixIncluded}</h1>
+                    }
                     <h1 className="cart-btns">
                       <button
-                        onClick={() => handleRemoveFromCart(ticket.id)}
+                        onClick={() => handleRemoveFromCart(index)}
                         className="remove-from-cart"
                       >
                         -
                       </button>
                       ${formatNumberWithCommas(ticket.price)}
                       {!ticket.hasTables && (
-                        <button className="add-from-cart">+</button>
+                        <button className="add-from-cart" onClick={() => addQuantityToTicket(ticket.id)}>+</button>
                       )}
                       {ticket.hasTables && (
                         <button className="add-from-cart-invisible">+</button>

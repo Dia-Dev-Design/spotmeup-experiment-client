@@ -38,8 +38,8 @@ const Home = () => {
           className="home-search-bar"
           placeholder="Search..."
         />
-        <button class="button search-button">
-          <span class="span">🔎</span>
+        <button className="button search-button">
+          <span className="span">🔎</span>
         </button>
       </div>
       <h1 className="home-carousel-title">Feature Events</h1>
