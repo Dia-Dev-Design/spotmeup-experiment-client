@@ -6,7 +6,8 @@ import { findEvent } from "../services/events.service";
 import { TicketsContext } from "../context/tickets.context";
 import {
   createTransaction,
-  findAllTransactions,
+  // findAllTransactions,
+  getTransactionCount,
 } from "../services/transaction.service";
 import CryptoJS from "crypto-js";
 import { findValidationInEvent } from "../services/validation.service";
@@ -14,6 +15,7 @@ import { findValidationInEvent } from "../services/validation.service";
 const BuyTickets = () => {
   const param = useParams();
   // console.log("eventIdParam:", param.eventIdParam);
+  const { ticketsCart, setTicketsCart } = useContext(TicketsContext);
   const [selected, setSelected] = useState({
     id: "",
     price: 0,
@@ -26,13 +28,13 @@ const BuyTickets = () => {
   });
   const [event, setEvent] = useState();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 760);
-  const { ticketsCart, setTicketsCart } = useContext(TicketsContext);
   const [checkoutTab, setCheckoutTab] = useState(false);
   const [total, setTotal] = useState(0);
   const [cargoServicio, setCargoServicio] = useState(0);
   const [transactionLength, setTransactionLength] = useState(0);
   const [transactionId, setTransactionId] = useState("");
   const [email, setEmail] = useState("");
+  const [emailPrompt, setEmailPrompt] = useState("");
 
   const handleCheckoutTab = () => {
     setCheckoutTab((prev) => !prev);
@@ -59,24 +61,7 @@ const BuyTickets = () => {
     setCargoServicio(newCargoServicio);
   };
 
-  useEffect(() => {
-    calculateTotal(ticketsCart);
-  }, [ticketsCart]);
 
-  useEffect(() => {
-    calculateCargoServicio(total);
-  }, [total]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 760);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   const getEvent = async () => {
     try {
@@ -90,13 +75,11 @@ const BuyTickets = () => {
     }
   };
 
-  const getAllTransaction = async () => {
+  const getTransactionLength = async () => {
     try {
-      const response = await findAllTransactions();
-      if (response.success) {
-        setTransactionLength(response.transactions.length);
-      }
-      // console.log("GetTheTransactions - Sucess:", response);
+      const response = await getTransactionCount();
+
+      setTransactionLength(response);
     } catch (error) {
       console.error("GetTheTransactions - Error:", error.response);
     }
@@ -104,24 +87,18 @@ const BuyTickets = () => {
 
   // console.log("Transactions:", transactionLength);
 
-  const getValidation = async () => {
-    try {
-      const response = await findValidationInEvent(param.eventIdParam);
-      console.log("Validation Object:", response);
-    } catch (error) {
-      console.error("Get Validatin Error:", error.response);
-    }
-  };
-
-  useEffect(() => {
-    getEvent();
-    getAllTransaction();
-    getValidation();
-  }, []);
+  // const getValidation = async () => {
+  //   try {
+  //     const response = await findValidationInEvent(param.eventIdParam);
+  //     console.log("Validation Object:", response);
+  //   } catch (error) {
+  //     console.error("Get Validatin Error:", error.response);
+  //   }
+  // };
 
   const handleAddToCart = () => {
     console.log("Adding to cart Dustin:", selected);
-    let newCartTickets = [...ticketsCart, selected]
+    let newCartTickets = [...ticketsCart, selected];
     setTicketsCart(newCartTickets);
     setSelected({
       id: "",
@@ -136,17 +113,17 @@ const BuyTickets = () => {
   };
 
   const handleRemoveFromCart = (index) => {
-    const newTickets = ticketsCart.filter((ticket, i) => i !== index)
-    console.log("This is the tickets lenght", newTickets.length)
+    const newTickets = ticketsCart.filter((ticket, i) => i !== index);
+    console.log("This is the tickets lenght", newTickets.length);
     setTicketsCart(newTickets);
   };
 
   const addQuantityToTicket = (ticketId) => {
-    let thisTicket = ticketsCart.find((ticket, i) => ticket.id === ticketId)
-    let updatedTickets = [...ticketsCart, thisTicket]
-    setTicketsCart(updatedTickets)
-    console.log("WE've found a Ticket!!!!", thisTicket)
-  } 
+    let thisTicket = ticketsCart.find((ticket, i) => ticket.id === ticketId);
+    let updatedTickets = [...ticketsCart, thisTicket];
+    setTicketsCart(updatedTickets);
+    console.log("WE've found a Ticket!!!!", thisTicket);
+  };
 
   const calculateAuthHash = () => {
     const secretKey =
@@ -159,7 +136,7 @@ const BuyTickets = () => {
       "001",
       (total + cargoServicio).toFixed(2).replace(".", ""),
       "000",
-      `https://localhost:5173/approved/${param.eventIdParam}/${transactionId}`,
+      `http://localhost:5173/approved/${param.eventIdParam}/${transactionId}`,
       "https://instagram.com",
       "https://google.com",
       "1",
@@ -192,53 +169,78 @@ const BuyTickets = () => {
   // ],
   // buyer: { type: Schema.Types.ObjectId, ref: "Users" },
 
-  const transactionBody = {
-    transactionNumber: transactionLength,
-    paymentMethod: "",
-    subTotal: "",
-    discount: "",
-    tax: "",
-    total: "",
-    description: "",
-    status: "pending",
-    items: ticketsCart,
-    email: email,
-  };
-
-  const [emailPrompt, setEmailPrompt] = useState(null);
+  // price: 0,
+  // hasTables: false,
+  // maxTickets: 1,
+  // name: "",
+  // tixToGenerate: 1,
+  // blockId: "",
+  // tixIncluded: 0,
 
   const handleTransaction = async () => {
-    if (!email) {
-      setEmailPrompt("Email must be filled");
-      setTimeout(() => {
-        setEmailPrompt(null);
-      }, 3000);
-    } else {
-      try {
+    try {
+      if (!email) {
+        setEmailPrompt("Email must be filled");
+        setTimeout(() => {
+          setEmailPrompt("");
+        }, 3000);
+      } else {
+        const transactionBody = {
+          transactionNumber: transactionLength,
+          paymentMethod: "",
+          subTotal: "",
+          discount: "",
+          tax: "",
+          total: "",
+          description: "",
+          status: "pending",
+          items: ticketsCart,
+          email: email,
+        };
+
         const response = await createTransaction(transactionBody);
         if (response.success) {
           setTransactionId(response.transaction._id);
           console.log("CreateTransaction - Success:", response);
           setCheckoutTab(true);
         }
-      } catch (error) {
-        console.error("CreateTransaction - Success:", error.response);
       }
+    } catch (error) {
+      console.error("CreateTransaction - Success:", error.response);
     }
   };
 
-  // console.log("transactionId:", transactionId);
+  
 
   const handleInputChange = (e) => {
     const { value } = e.target;
     setEmail((prevEmail) => value);
   };
 
-  console.log("------------------------");
-  console.log("Total", total);
-  console.log("Cargo x Servicio", cargoServicio);
-  console.log("Total + CargoServicio", total + cargoServicio);
-  console.log("------------------------");
+  useEffect(() => {
+    calculateTotal(ticketsCart);
+  }, [ticketsCart]);
+
+  useEffect(() => {
+    calculateCargoServicio(total);
+  }, [total]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 760);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    getEvent();
+    getTransactionLength();
+    // getValidation();
+  }, []);
 
   return (
     <div>
@@ -328,15 +330,13 @@ const BuyTickets = () => {
                   >
                     <h1 className="ticket-selected-form">{ticket.name}</h1>
                     <h1>{ticket.tixIncluded}</h1>
-                    {
-                      ticket.name === "General Area" ? 
-
-                        <h1>{ticketsCart.reduce((a, b) => a + b.tixToGenerate, 0)}</h1>
-
-                        :
-
-                        <h1>{ticket.tixIncluded}</h1>
-                    }
+                    {ticket.name === "General Area" ? (
+                      <h1>
+                        {ticketsCart.reduce((a, b) => a + b.tixToGenerate, 0)}
+                      </h1>
+                    ) : (
+                      <h1>{ticket.tixIncluded}</h1>
+                    )}
                     <h1 className="cart-btns">
                       <button
                         onClick={() => handleRemoveFromCart(index)}
@@ -346,7 +346,12 @@ const BuyTickets = () => {
                       </button>
                       ${formatNumberWithCommas(ticket.price)}
                       {!ticket.hasTables && (
-                        <button className="add-from-cart" onClick={() => addQuantityToTicket(ticket.id)}>+</button>
+                        <button
+                          className="add-from-cart"
+                          onClick={() => addQuantityToTicket(ticket.id)}
+                        >
+                          +
+                        </button>
                       )}
                       {ticket.hasTables && (
                         <button className="add-from-cart-invisible">+</button>
@@ -520,7 +525,7 @@ const BuyTickets = () => {
               type="hidden"
               id="ApprovedUrl"
               name="ApprovedUrl"
-              value={`https://localhost:5173/approved/${param.eventIdParam}/${transactionId}`}
+              value={`http://localhost:5173/approved/${param.eventIdParam}/${transactionId}`}
             />
             <input
               type="hidden"

@@ -12,38 +12,51 @@ import { updateValidationStatus } from "../services/validation.service";
 
 const Approved = () => {
   const param = useParams();
+
   const { ticketsCart } = useContext(TicketsContext);
-  const [event, setEvent] = useState(null);
-  const [scanResult, setScanResult] = useState("");
+
+  // const [event, setEvent] = useState(null);
+  // const [transaction, setTransaction] = useState(null);
+  const [transaction, setTransaction] = useState(null)
+  const [transactionId, setTransactionId] = useState('')
+
+  const [tickets, setTickets] = useState([]);
+  
+  
+  
+  const [emailSuccess, setEmailSuccess] = useState(null);
+  const [emailFailed, setEmailFailed] = useState(null);
   const [cameraActive, setCameraActive] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
-  // const [transaction, setTransaction] = useState(null);
+  
+  const [scanResult, setScanResult] = useState("");
+  const [ticketsCreated, setticketsCreated] = useState(false);
   const [ticketsToCreate, setTicketsToCreate] = useState(0);
   const [ableToGenerate, setAbleToGenerate] = useState(false);
-  const [tickets, setTickets] = useState([]);
-  const [ticketsCreated, setticketsCreated] = useState(false);
-
   //   console.log("🚀 ~ Approved ~ ticketsCart:", ticketsCart);
 
   //   console.log("eventIdParam:", param.eventIdParam);
 
+  
+
   const generateTickets = async () => {
+
     try {
+      const thisEvent = await findEvent(param.eventIdParam);
 
-        const thisEvent = await findEvent(param.eventIdParam);
+      // const thisTransaction = await findTransaction(param.transactionIdParam);
 
-        const thisTransaction = await findTransaction(param.transactionIdParam)
+      // console.log("This is the transaction!!!!", thisTransaction, thisEvent);
 
-        console.log("This is the transaction!!!!", thisTransaction, thisEvent)
+      // let theseTickets = await getAllTicketInTransaction(param.transactionIdParam);
 
-        let theseTickets = await getAllTicketInTransaction(param.transactionIdParam);
+      let ticketsallTickets
 
-        let ticketsallTickets
+      if (transactionId) {
 
-        if (theseTickets.length === thisTransaction.items) {
-
-          ticketsallTickets = await Promise.allSettled(thisTransaction.transaction.items.map((ticket) => {
-            return createTicket({
+        ticketsallTickets = await Promise.allSettled(
+            transaction.items.map((ticket) => {
+              return createTicket({
                 name: ticket?.name,
                 eventDate: thisEvent.event?.date,
                 eventTime: thisEvent.event?.time,
@@ -52,28 +65,40 @@ const Approved = () => {
                 event: param.eventIdParam,
                 layout: thisEvent.event?.layout._id,
                 block: ticket.hasTables ? ticket.blockId : ticket.id,
-                transaction: thisTransaction.transaction._id,
-                email: thisTransaction.transaction.email,
+                transaction: transaction._id,
+                email: transaction.email,
+              });
             })
-          }))
-          
-        }
+          );
 
 
 
+          console.log(
+            "these are all of the tickets.........,",
+            // theseTickets,
+            ticketsallTickets
+          );
+    
+          let validated = await updateValidationStatus(param.transactionIdParam);
+    
+          console.log("Are we validated =====>", validated);
+    
+          if (validated.success) {
+            console.log("These are the tickets on 81", ticketsallTickets)
 
-        console.log("these are all of the tickets.........,", theseTickets, ticketsallTickets)
+            let fulfilledTickets = ticketsallTickets.filter((ticket) => ticket.status === "fulfilled")
 
-        let validated = await updateValidationStatus(param.transactionIdParam);
+            setTickets(fulfilledTickets.map((result) => result.value.ticket));
+            console.log("All tickets are valid");
+          } else {
+            console.log("Unable To Process Transactions");
+          }
 
-        console.log("Are we validated =====>", validated)
 
-        if (validated) {
-          setTickets(ticketsallTickets.map((result) => result.value.ticket))
-          console.log("All tickets are valid")
-        } else {
-          console.log("Unable To Process Transactions");
       }
+
+    
+
     } catch (error) {
       console.log(error);
     }
@@ -222,8 +247,7 @@ const Approved = () => {
     facingMode: "environment",
   };
 
-  const [emailSuccess, setEmailSuccess] = useState(null);
-  const [emailFailed, setEmailFailed] = useState(null);
+
 
   const receiveEmail = async () => {
     try {
@@ -275,16 +299,7 @@ const Approved = () => {
   //   }
   // }, [ableToGenerate, ticketsToCreate]);
 
-  useEffect(() => {
-    // getTheEvent();
-    // // getTransaction();
-    // findTicketInTransaction();
-    // setTimeout(() => {
-    //   // receiveEmail();
-    //   getTheEvent();
-    // }, 2000);
-    generateTickets()
-  }, [param.eventIdParam]);
+
 
   const handleResendEmail = async () => {
     try {
@@ -304,7 +319,33 @@ const Approved = () => {
     }
   };
 
+  const getTransaction = async () => {
+
+    let foundTransaction = await findTransaction(param.transactionIdParam)
+
+    console.log("This is the found transaction line 323", foundTransaction)
+
+    setTransaction(foundTransaction.transaction)
+    setTransactionId(foundTransaction.transaction._id)
+
+  }
+
   // console.log("tickets:", tickets);
+
+  useEffect(() => {
+    
+    if (!transaction) {
+      getTransaction()
+    }
+
+    if (transactionId && transaction && !transaction.tickets?.length) {
+      console.log("This is the transaction ID line 337", transactionId)
+      generateTickets();
+    } else {
+      setTickets(transaction?.tickets)
+    }
+
+  }, [transactionId]);
 
   return (
     <div>
@@ -321,9 +362,11 @@ const Approved = () => {
           }
         >
           {tickets?.length ? (
+      
             <>
-              {tickets?.map((ticket, index) => (
-                <div key={ticket._id}>
+              {    
+                tickets?.map((ticket, index) => (
+                <div key={ticket?._id}>
                   <span className="qr-seperator"></span>
                   <QRCode
                     value={ticket?.qrCode}
