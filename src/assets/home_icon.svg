@@ -1,0 +1,13 @@
+            <svg
+              width="28"
+              height="32"
+              viewBox="0 0 28 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="home-icon"
+            >
+              <path
+                d="M2 30H9.384V18.232H18.616V30H26V12L14 2.92401L2 12V30ZM0 32V11L14 0.424011L28 11V32H16.616V20.232H11.384V32H0Z"
+                fill="black"
+              />
+            </svg>

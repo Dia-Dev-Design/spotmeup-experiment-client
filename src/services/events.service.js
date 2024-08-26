@@ -13,6 +13,7 @@ const headers = {
 };
 
 export const createEvent = async (body) => {
+
   try {
     const response = await axios.post(`${API_URL}/event/create`, body, headers);
     return response.data;
