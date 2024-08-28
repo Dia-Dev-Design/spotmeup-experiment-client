@@ -136,7 +136,8 @@ const BuyTickets = () => {
       "001",
       (total + cargoServicio).toFixed(2).replace(".", ""),
       "000",
-      `http://localhost:5173/approved/${param.eventIdParam}/${transactionId}`,
+      `http://localhost:3000/transaction/approved/${param.eventIdParam}/${transactionId}`,
+      // `http://localhost:5173/approved/${param.eventIdParam}/${transactionId}`,
       "https://instagram.com",
       "https://google.com",
       "1",
@@ -152,30 +153,6 @@ const BuyTickets = () => {
     return hash.toString(CryptoJS.enc.Hex);
   };
 
-  // transactionNumber: { type: Number },
-  // paymentMethod: { type: String },
-  // subTotal: { type: Number, default: 0 },
-  // discount: { type: Number, default: 0 },
-  // tax: { type: Number, default: 0 },
-  // total: { type: Number, default: 0 },
-  // description: { type: String, default: "" },
-  // status: { type: String, enum: ["pending", "completed", "canceled"] },
-  // items: [
-  //   {
-  //     name: { type: String, required: true },
-  //     quantity: { type: Number, required: true },
-  //     price: { type: Number, required: true },
-  //   },
-  // ],
-  // buyer: { type: Schema.Types.ObjectId, ref: "Users" },
-
-  // price: 0,
-  // hasTables: false,
-  // maxTickets: 1,
-  // name: "",
-  // tixToGenerate: 1,
-  // blockId: "",
-  // tixIncluded: 0,
 
   const handleTransaction = async () => {
     try {
@@ -199,6 +176,7 @@ const BuyTickets = () => {
         };
 
         const response = await createTransaction(transactionBody);
+        console.log("This is the response on 178 ========>", response)
         if (response.success) {
           setTransactionId(response.transaction._id);
           console.log("CreateTransaction - Success:", response);
@@ -481,7 +459,7 @@ const BuyTickets = () => {
             method="post"
             id="paymentForm"
             name="paymentForm"
-            target="_blank"
+            // target="_blank"
           >
             <input
               type="hidden"
@@ -525,8 +503,14 @@ const BuyTickets = () => {
               type="hidden"
               id="ApprovedUrl"
               name="ApprovedUrl"
-              value={`http://localhost:5173/approved/${param.eventIdParam}/${transactionId}`}
+              value={`http://localhost:3000/transaction/approved/${param.eventIdParam}/${transactionId}`}
             />
+            {/* <input
+              type="hidden"
+              id="ApprovedUrl"
+              name="ApprovedUrl"
+              value={`http://localhost:5173/approved/${param.eventIdParam}/${transactionId}`}
+            /> */}
             <input
               type="hidden"
               id="DeclinedUrl"
