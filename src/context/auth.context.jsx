@@ -29,6 +29,7 @@ function AuthProvider({ children }) {
         setIsLoading,
         setUser,
         user,
+        storeToken
       }}
     >
       {children}

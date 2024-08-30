@@ -6,6 +6,10 @@ export const storeToken = (token) => {
   console.log("Line 6 - Token:", token);
 };
 
+export const removeToken = () => {
+  localStorage.clear()
+}
+
 export const authenticateUser = () => {
   const storedToken = localStorage.getItem("authToken");
 
@@ -19,6 +23,7 @@ export const authenticateUser = () => {
       })
       .catch((error) => {
         console.log("Verify - Error:", error.response);
+        removeToken()
         return { user: null, isLoggedIn: false, isLoading: false };
       });
   } else {

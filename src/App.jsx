@@ -40,7 +40,9 @@ function App() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
+    
       <Routes>
+
         <Route element={<NotLoggedIn />}>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<LogIn />} />
@@ -84,6 +86,7 @@ function App() {
             element={<Approved />}
           />
         </Route>
+
         <Route path="/scannig-tool/:eventIdParam" element={<ScanningTool />} />
       </Routes>
     </Suspense>
