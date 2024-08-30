@@ -41,16 +41,18 @@ body {
   -webkit-text-stroke: 0.2px #231f20;
   text-shadow: 4px 5px 1px var(--black);
   padding: 0;
-  margin: 0 2rem;
-  width: auto;
+  margin: 0 0;
+  padding-left: 2rem;
+  width: 100vw;
   cursor: url("./assets/icons/cursor.png"), default;
+  background-color: var(--green);
 }
 
 .spotmeup-text {
   display: flex;
   flex-direction: column;
   width: 35%;
-  margin-top: 3rem;
+  /* margin-top: 3rem; */
 }
 
 .spotmeup-text:hover > h1 {
@@ -161,6 +163,8 @@ button:hover {
   display: flex;
   flex-direction: column;
   align-items: end;
+  background-color: var(--green);
+  height: 100vh;
 }
 
 .login-form-smaller-container {
@@ -6536,19 +6540,23 @@ input[type="color"]::-webkit-color-swatch {
   width: 100%;
   align-items: center;
   flex-direction: column;
-  margin-top: 2rem;
+  /* margin-top: 2rem; */
 }
 
 .tickets-selected-container {
   display: flex;
   justify-content: space-between;
-  width: 44%;
+  width: 60%;
 }
+
 .tickets-selected-container > h1 {
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   color: black;
   font-weight: 300;
   padding: 0.5rem;
+  flex-basis: 0;
+  flex-grow: 1;
+  text-align: center;
 }
 
 .ticket-selected-bg {
@@ -6600,9 +6608,22 @@ input[type="color"]::-webkit-color-swatch {
   margin-left: 0.5rem;
 }
 
+.add-from-cart-invisible {
+  padding: 0rem 0.2rem;
+  border-radius: 0rem;
+  border-radius: 5px;
+  box-shadow: none;
+  margin-left: 0.5rem;
+  pointer-events: none;
+  background-color: transparent;
+  color: transparent;
+  border-color: transparent;
+}
+
 .cart-btns {
   display: flex;
   justify-content: space-between;
+  width: 100px;
 }
 
 .checkout-cancel-container {
@@ -6755,6 +6776,12 @@ input[type="color"]::-webkit-color-swatch {
   /* left: 50%; */
 }
 
+.ticket-selected-container-parent {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 @media (max-width: 760px) {
   .qr-reader-container > video {
     position: absolute;
@@ -6782,6 +6809,20 @@ input[type="color"]::-webkit-color-swatch {
   .tickets-selected-container {
     width: 90%;
   }
+  .ticket-selected-container-parent {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .tickets-selected-container > h1 {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    flex: 1 1 0;
+    text-align: center;
+    padding: 0.5rem 0rem;
+    /* padding-left: 0rem; */
+  }
   .email-transaction-input {
     width: 85%;
   }
@@ -6789,6 +6830,7 @@ input[type="color"]::-webkit-color-swatch {
     width: 90%;
     margin-bottom: 1rem;
   }
+
   .card-details {
     width: 100px;
     height: 100px;
@@ -7010,4 +7052,94 @@ input[type="color"]::-webkit-color-swatch {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.must-login-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  padding-top: 15rem;
+  background-color: var(--green);
+  height: 100vh;
+}
+
+.prompt-login-navigate {
+  color: white;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  position: absolute;
+  left: 2%;
+  top: 3%;
+  font-size: 4rem;
+}
+
+@media (max-width: 760px) {
+  .prompt-login-navigate {
+    font-size: 2.5rem;
+    left: 6%;
+    top: 6%;
+  }
+}
+
+.total-sales-title {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  color: black;
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 500;
+}
+
+.button-filter-container {
+  margin: 1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.button-filter-container > button {
+  flex-grow: 1;
+}
+
+.selected-value {
+  opacity: 0.5;
+}
+
+.quantity-included-container-parent {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.quantity-included-container {
+  display: flex;
+  justify-content: space-between;
+  width: 60%;
+  gap: 1rem;
+  background-color: #777476;
+  border: 1px solid black;
+  border-bottom: none;
+}
+
+@media (max-width: 760px) {
+  .quantity-included-container {
+    width: 90%;
+  }
+}
+
+.quantity-included-container > h1 {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  color: white;
+  font-weight: 600;
+  padding: 1rem 0rem;
+  white-space: nowrap;
+  flex-basis: 0;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.ticket-selected-form {
+  font-weight: 500 !important;
+}
+
+.form-header-price {
+  width: 60px;
 }

@@ -15,7 +15,7 @@ const EventTicketsForm = ({ setEvent, selectedVenue, event, hasVenue }) => {
       const response = await createEvent({ ...event, images: [""] });
       if (response.success) {
         const formData = new FormData();
-        if (event.images.length) {
+        if (event.images && event.images.length > 0) {
           event.images.forEach((img) => {
             formData.append("image", img);
           });
@@ -23,7 +23,7 @@ const EventTicketsForm = ({ setEvent, selectedVenue, event, hasVenue }) => {
             response.event._id,
             formData
           );
-          console.log("uploadREsponse:", uploadResponse);
+          console.log("uploadResponse:", uploadResponse);
           if (uploadResponse.success) {
             console.log(uploadResponse.message);
           }
@@ -40,7 +40,8 @@ const EventTicketsForm = ({ setEvent, selectedVenue, event, hasVenue }) => {
         }, 1000);
       }
     } catch (error) {
-      setMessage(error.response.message);
+      console.error("The Actual Error:", error);
+      setMessage(error.message);
     }
   };
   useEffect(() => {

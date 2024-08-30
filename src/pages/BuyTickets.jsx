@@ -9,18 +9,20 @@ import {
   findAllTransactions,
 } from "../services/transaction.service";
 import CryptoJS from "crypto-js";
+import { findValidationInEvent } from "../services/validation.service";
 
 const BuyTickets = () => {
   const param = useParams();
-  console.log("eventIdParam:", param.eventIdParam);
+  // console.log("eventIdParam:", param.eventIdParam);
   const [selected, setSelected] = useState({
     id: "",
     price: 0,
     hasTables: false,
     maxTickets: 1,
     name: "",
-    tixToGenerate: 0,
+    tixToGenerate: 1,
     blockId: "",
+    tixIncluded: 0,
   });
   const [event, setEvent] = useState();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 760);
@@ -52,13 +54,19 @@ const BuyTickets = () => {
     setTotal(newTotal);
   };
 
+  const calculateCargoServicio = (total) => {
+    const newCargoServicio = total * 0.1;
+    setCargoServicio(newCargoServicio);
+  };
+
   useEffect(() => {
     calculateTotal(ticketsCart);
-    setCargoServicio(total * 0.1);
-  }, [ticketsCart, cargoServicio]);
+  }, [ticketsCart]);
 
-  console.log("🚀 ~ BuyTickets ~ total:", total);
-  console.log("🚀 ~ BuyTickets ~ cargoServicio:", cargoServicio);
+  useEffect(() => {
+    calculateCargoServicio(total);
+  }, [total]);
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 760);
@@ -73,7 +81,7 @@ const BuyTickets = () => {
   const getEvent = async () => {
     try {
       const response = await findEvent(param.eventIdParam);
-      console.log("GetTheEvent - Success:", response);
+      // console.log("GetTheEvent - Success:", response);
       if (response.success) {
         setEvent(response.event);
       }
@@ -88,22 +96,33 @@ const BuyTickets = () => {
       if (response.success) {
         setTransactionLength(response.transactions.length);
       }
-      console.log("GetTheTransactions - Sucess:", response);
+      // console.log("GetTheTransactions - Sucess:", response);
     } catch (error) {
       console.error("GetTheTransactions - Error:", error.response);
     }
   };
 
-  console.log("Transactions:", transactionLength);
+  // console.log("Transactions:", transactionLength);
+
+  const getValidation = async () => {
+    try {
+      const response = await findValidationInEvent(param.eventIdParam);
+      console.log("Validation Object:", response);
+    } catch (error) {
+      console.error("Get Validatin Error:", error.response);
+    }
+  };
 
   useEffect(() => {
     getEvent();
     getAllTransaction();
+    getValidation();
   }, []);
 
   const handleAddToCart = () => {
-    console.log("Adding to cart:", selected);
-    setTicketsCart((prevTicketsCart) => [...prevTicketsCart, selected]);
+    console.log("Adding to cart Dustin:", selected);
+    let newCartTickets = [...ticketsCart, selected]
+    setTicketsCart(newCartTickets);
     setSelected({ id: "", price: 0 });
   };
 
@@ -126,7 +145,7 @@ const BuyTickets = () => {
       (total + cargoServicio).toFixed(2).replace(".", ""),
       "000",
       `https://localhost:5173/approved/${param.eventIdParam}/${transactionId}`,
-      "https://google.com",
+      "https://instagram.com",
       "https://google.com",
       "1",
       "ticketsAmount",
@@ -193,12 +212,18 @@ const BuyTickets = () => {
     }
   };
 
-  console.log("transactionId:", transactionId);
+  // console.log("transactionId:", transactionId);
 
   const handleInputChange = (e) => {
     const { value } = e.target;
     setEmail((prevEmail) => value);
   };
+
+  console.log("------------------------");
+  console.log("Total", total);
+  console.log("Cargo x Servicio", cargoServicio);
+  console.log("Total + CargoServicio", total + cargoServicio);
+  console.log("------------------------");
 
   return (
     <div>
@@ -253,49 +278,70 @@ const BuyTickets = () => {
         </div>
 
         {ticketsCart.length > 0 && (
-          <div className="email-container-buytickets">
-            {emailPrompt && <h2 className="email-prompt">{emailPrompt}</h2>}
-            <label htmlFor="email" className="email-title-tickets">
-              ¿Donde enviamos los tickets?
-            </label>
-            <input
-              type="email"
-              placeholder="email@example.com"
-              name="email"
-              onChange={handleInputChange}
-              className="email-transaction-input"
-            />
+          <div>
+            <div className="email-container-buytickets">
+              {emailPrompt && <h2 className="email-prompt">{emailPrompt}</h2>}
+              <label htmlFor="email" className="email-title-tickets">
+                ¿Donde enviamos los tickets?
+              </label>
+              <input
+                type="email"
+                placeholder="email@example.com"
+                name="email"
+                onChange={handleInputChange}
+                className="email-transaction-input"
+              />
+            </div>
+            <div className="quantity-included-container-parent">
+              <div className="quantity-included-container">
+                <h1>Description</h1>
+                <h1>Included</h1>
+                <h1>Qty</h1>
+                <h1 className="form-header-price">Price</h1>
+              </div>
+            </div>
           </div>
         )}
         {ticketsCart.length > 0 && (
           <div>
             <div className="buy-tickets-form">
               {ticketsCart.map((ticket, index) => (
-                <div
-                  key={index}
-                  className="tickets-selected-container ticket-selected-bg"
-                >
-                  <h1>Selected:</h1>
-                  <h1 className="cart-btns">
-                    <button
-                      onClick={() => handleRemoveFromCart(ticket.id)}
-                      className="remove-from-cart"
-                    >
-                      -
-                    </button>
-                    ${formatNumberWithCommas(ticket.price)}
-                    {!ticket.hasTables && (
-                      <button className="add-from-cart">+</button>
-                    )}
-                  </h1>
+                <div className="ticket-selected-container-parent">
+                  <div
+                    key={index}
+                    className="tickets-selected-container ticket-selected-bg"
+                  >
+                    <h1 className="ticket-selected-form">{ticket.name}</h1>
+                    <h1>{ticket.tixIncluded}</h1>
+                    <h1>0</h1>
+                    <h1 className="cart-btns">
+                      <button
+                        onClick={() => handleRemoveFromCart(ticket.id)}
+                        className="remove-from-cart"
+                      >
+                        -
+                      </button>
+                      ${formatNumberWithCommas(ticket.price)}
+                      {!ticket.hasTables && (
+                        <button className="add-from-cart">+</button>
+                      )}
+                      {ticket.hasTables && (
+                        <button className="add-from-cart-invisible">+</button>
+                      )}
+                    </h1>
+                  </div>
                 </div>
               ))}
               <div className="tickets-selected-container ticket-selected-cargo">
-                <h1>Cargo x Servicio:</h1>
+                <h1 className="bold">Cargo x Servicio:</h1>
+                <h1></h1>
+                <h1></h1>
                 <h1>${formatNumberWithCommas(total * 0.1)}</h1>
               </div>
               <div className="tickets-selected-container ticket-selected-total">
-                <h1>Total:</h1>
+                <h1 className="bold">Total:</h1>
+                <h1></h1>
+                <h1></h1>
                 <h1 className="bold">
                   RD$ {formatNumberWithCommas(total + cargoServicio)}
                 </h1>
@@ -457,7 +503,7 @@ const BuyTickets = () => {
               type="hidden"
               id="DeclinedUrl"
               name="DeclinedUrl"
-              value="https://google.com"
+              value="https://instagram.com"
             />
             <input
               type="hidden"
@@ -517,9 +563,7 @@ const BuyTickets = () => {
             />
           </form>
         </div>
-        
 
-        
         <h1 className="checkout-cancel" onClick={() => setCheckoutTab(false)}>
           Cancel
         </h1>

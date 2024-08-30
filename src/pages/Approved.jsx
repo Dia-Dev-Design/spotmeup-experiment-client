@@ -8,17 +8,20 @@ import { findTransaction } from "../services/transaction.service";
 import { createTicket } from "../services/ticket.service";
 import { getAllTicketInTransaction } from "../services/ticket.service";
 import { sendEmailTickets } from "../services/ticket.service";
+import { updateValidationStatus } from "../services/validation.service";
 
 const Approved = () => {
   const param = useParams();
   const { ticketsCart } = useContext(TicketsContext);
-  const [event, setEvent] = useState();
+  const [event, setEvent] = useState(null);
   const [scanResult, setScanResult] = useState("");
   const [cameraActive, setCameraActive] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
-  const [transaction, setTransaction] = useState(null);
+  // const [transaction, setTransaction] = useState(null);
+  const [ticketsToCreate, setTicketsToCreate] = useState(0)
   const [ableToGenerate, setAbleToGenerate] = useState(false);
-  const [tickets, setTickets] = useState(null);
+  const [tickets, setTickets] = useState([]);
+  const [ticketsCreated, setticketsCreated] = useState(false);
 
   //   console.log("🚀 ~ Approved ~ ticketsCart:", ticketsCart);
 
@@ -36,13 +39,90 @@ const Approved = () => {
     }
   };
 
+  const findTicketInTransaction = async () => {
+    try {
+      const response = await getAllTicketInTransaction(
+        param.transactionIdParam
+      );
+      if (response.success) {
+        if (response.tickets.length > 0) {
+          setTickets(response.tickets);
+          setAbleToGenerate(false);
+          // setticketsCreated(true);
+          // if (ticketsCreated) {
+          try {
+            const response = await updateValidationStatus(
+              param.transactionIdParam
+            );
+
+            if (response.success) {
+              console.log("Validation Updated:", response.validation);
+            }
+          } catch (error) {
+            console.error("Validation Error:", error.response);
+          }
+          // }
+          console.log(
+            `There are ${response.tickets.length} tickets already created`
+          );
+        } else {
+          setAbleToGenerate(true);
+        }
+        console.log("GetAllTicketsInTransaction - Success:", response.tickets);
+      }
+    } catch (error) {
+      console.error("GetAllTicketsInTransaction - Error:", error.response);
+    }
+  };
+
+  const createTickets = async (completedItems, transaction) => {
+
+    // console.log(`Table #1 ${transaction} - Table #1 ${event}`, transaction, event)
+    // if (!transaction || !event) return;
+
+    try {
+      for (const item of completedItems) {
+        console.log("these are the the items =====>", transaction.items)
+        for (let i = 0; i < completedItems.length; i++) {
+          const ticketObject = {
+            name: item?.name,
+            eventDate: event?.date,
+            eventTime: event?.time,
+            price: item.price,
+            status: "active",
+            event: param.eventIdParam,
+            layout: event?.layout._id,
+            block: item.hasTables ? item.blockId : item.id,
+            transaction: transaction._id,
+            email: transaction.email,
+          };
+
+          console.log("This is for table one++++++++>", ticketObject)
+
+          console.log("Creating the specific Ticket")
+          let thisTickets = await createTicket(ticketObject);
+          setTickets([...tickets, thisTickets])
+          await receiveEmail();
+          console.log("Ticket creado:", ticketObject);
+        }
+      }
+
+      console.log("----------------------------------");
+      console.log("All tickets created successfully.");
+
+      // await findTicketInTransaction();
+    } catch (error) {
+      console.error("Error creating tickets:", error);
+    }
+  };
+
   const getTransaction = async () => {
     try {
       const response = await findTransaction(param.transactionIdParam);
       if (response.success) {
-        setTransaction(response.transaction);
+        createTickets(response.transaction.items, response.transaction)
       }
-      console.log("Get Transaction:", response.transaction);
+      console.log("Get Transaction:", response);
     } catch (error) {
       console.error("response.error.transaction:", error.response);
     }
@@ -91,27 +171,7 @@ const Approved = () => {
     facingMode: "environment",
   };
 
-  const findTicketInTransaction = async () => {
-    try {
-      const response = await getAllTicketInTransaction(
-        param.transactionIdParam
-      );
-      if (response.success) {
-        if (response.tickets.length > 0) {
-          setTickets(response.tickets);
-          setAbleToGenerate(false);
-          console.log(
-            `There are ${response.tickets.length} tickets already created`
-          );
-        } else {
-          setAbleToGenerate(true);
-        }
-        console.log("GetAllTicketsInTransaction - Success:", response.tickets);
-      }
-    } catch (error) {
-      console.error("GetAllTicketsInTransaction - Error:", error.response);
-    }
-  };
+
 
   const [emailSuccess, setEmailSuccess] = useState(null);
   const [emailFailed, setEmailFailed] = useState(null);
@@ -135,37 +195,7 @@ const Approved = () => {
     }
   };
 
-  const createTickets = async () => {
-    if (!transaction || !event) return;
 
-    try {
-      for (const item of transaction.items) {
-        for (let i = 0; i < item.tixToGenerate; i++) {
-          const ticketObject = {
-            name: item.name,
-            eventDate: event?.date,
-            eventTime: event?.time,
-            price: item.price,
-            status: "active",
-            event: event?._id,
-            layout: event?.layout._id,
-            block: item.hasTables ? item.blockId : item.id,
-            transaction: transaction._id,
-            email: transaction.email,
-          };
-
-          await createTicket(ticketObject);
-          await receiveEmail();
-          console.log("Ticket creado:", ticketObject);
-        }
-      }
-      console.log("----------------------------------");
-      console.log("All tickets created successfully.");
-      await findTicketInTransaction();
-    } catch (error) {
-      console.error("Error creating tickets:", error);
-    }
-  };
 
   //   const ticketObjectJson = JSON.stringify(ticketObject);
 
@@ -189,21 +219,22 @@ const Approved = () => {
     }
   };
 
-  useEffect(() => {
-    if (transaction && event) {
-      if (ableToGenerate) {
-        createTickets();
-      }
-    }
-  }, [transaction, event]);
+  // useEffect(() => {
+  //   if (transaction?.items?.length) {
+  //     if (ableToGenerate) {
+  //       console.log("Running The Entire Loop")
+  //       createTickets();
+  //     }
+  //   }
+  // }, [ableToGenerate, ticketsToCreate]);    
 
   useEffect(() => {
-    findTicketInTransaction();
     getTheEvent();
     getTransaction();
+    findTicketInTransaction();
     setTimeout(() => {
       // receiveEmail();
-      getTheEvent();
+    getTheEvent();
     }, 2000);
   }, [param.eventIdParam]);
 
@@ -225,7 +256,7 @@ const Approved = () => {
     }
   };
 
-  console.log("tickets:", tickets);
+  // console.log("tickets:", tickets);
 
   return (
     <div>
@@ -236,8 +267,17 @@ const Approved = () => {
           <h1>{event?.address?.street}</h1>
           <h1>{formatTime(event?.time)}</h1>
         </div>
-        <div className={tickets?.length <= 2 ? "qr-code-container-two" : "qr-code-container"}>
-          {tickets?.map((ticket, index) => (
+        <div
+          className={
+            tickets?.length <= 2 ? "qr-code-container-two" : "qr-code-container"
+          }
+        >
+        {
+          tickets?.length ?
+         
+            <>
+            {
+            tickets?.map((ticket, index) => (
             <div>
               <QRCode
                 value={ticket?.qrCode}
@@ -247,6 +287,12 @@ const Approved = () => {
               <h1 className="ticket-name-qr">{ticket?.name}</h1>
             </div>
           ))}
+          </>
+          : <p>Loading...</p>
+        }
+          
+          
+          
         </div>
 
         <div className="approved-description">
