@@ -164,12 +164,12 @@ const BuyTickets = () => {
       } else {
         const transactionBody = {
           transactionNumber: transactionLength,
-          paymentMethod: "",
-          subTotal: "",
-          discount: "",
-          tax: "",
-          total: "",
-          description: "",
+          paymentMethod: "Prueba Azul",
+          subTotal: total,
+          discount: 0,
+          tax: cargoServicio,
+          total: total + cargoServicio,
+          description: `${ticketsCart.length} ${ticketsCart.length > 1 ? 'tickets' : 'ticket'} for ${event.name}.`,
           status: "pending",
           items: ticketsCart,
           email: email,
@@ -313,7 +313,7 @@ const BuyTickets = () => {
                         {ticketsCart.reduce((a, b) => a + b.tixToGenerate, 0)}
                       </h1>
                     ) : (
-                      <h1>{ticket.tixIncluded}</h1>
+                      <h1>{ticket.tixToGenerate || ticket.maxTickets}</h1>
                     )}
                     <h1 className="cart-btns">
                       <button
