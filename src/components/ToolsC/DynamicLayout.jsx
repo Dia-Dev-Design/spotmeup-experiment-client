@@ -11,6 +11,7 @@ const DynamicLayout = ({
   addToCart,
   selected,
   setSelected,
+  sold
 }) => {
   const [layoutObject, setlayoutObject] = useState({});
   const { ticketsCart } = useContext(TicketsContext);
@@ -155,7 +156,7 @@ const DynamicLayout = ({
             }
             key={index}
             className={`dasboard-table-hover click-inside ${
-              ticketsCart.some((ticket) => ticket.id === block._id)
+              ticketsCart.some((ticket) => ticket.id === block._id) 
                 ? "isInCart"
                 : ""
             }`}
@@ -203,7 +204,8 @@ const DynamicLayout = ({
                     opacity: selected?.id === `${table._id}` ? "0.7" : "1",
                   }}
                   className={`dashboard-table-number-parent click-inside ${
-                    ticketsCart.some((ticket) => ticket.id === table._id)
+                    ticketsCart.some((ticket) => ticket.id === table._id) 
+                    // || sold.tables.find((table) => table.tableId === table._id).sold
                       ? "isInCart"
                       : ""
                   }`}
