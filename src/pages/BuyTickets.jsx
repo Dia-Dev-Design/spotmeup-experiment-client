@@ -10,6 +10,9 @@ import {
   getTransactionCount,
 } from "../services/transaction.service";
 import CryptoJS from "crypto-js";
+
+import { API_URL } from "../services/api.service";
+
 import { findValidationInEvent } from "../services/validation.service";
 
 const BuyTickets = () => {
@@ -35,6 +38,8 @@ const BuyTickets = () => {
   const [transactionId, setTransactionId] = useState("");
   const [email, setEmail] = useState("");
   const [emailPrompt, setEmailPrompt] = useState("");
+
+  const [validationRecord, setValidationRecord] = useState(null)
 
   const handleCheckoutTab = () => {
     setCheckoutTab((prev) => !prev);
@@ -85,16 +90,15 @@ const BuyTickets = () => {
     }
   };
 
-  // console.log("Transactions:", transactionLength);
+  const getValidationRecord = async () => {
 
-  // const getValidation = async () => {
-  //   try {
-  //     const response = await findValidationInEvent(param.eventIdParam);
-  //     console.log("Validation Object:", response);
-  //   } catch (error) {
-  //     console.error("Get Validatin Error:", error.response);
-  //   }
-  // };
+    const foundValidation = await findValidationInEvent(param.eventIdParam)
+
+    console.log("This is the found validation record =======>", foundValidation)
+
+    setValidationRecord(foundValidation.validation)
+
+  }
 
   const handleAddToCart = () => {
     console.log("Adding to cart Dustin:", selected);
@@ -136,7 +140,7 @@ const BuyTickets = () => {
       "001",
       (total + cargoServicio).toFixed(2).replace(".", ""),
       "000",
-      `http://localhost:3000/transaction/approved/${param.eventIdParam}/${transactionId}`,
+      `${API_URL}/transaction/approved/${param.eventIdParam}/${transactionId}`,
       // `http://localhost:5173/approved/${param.eventIdParam}/${transactionId}`,
       "https://instagram.com",
       "https://google.com",
@@ -217,7 +221,7 @@ const BuyTickets = () => {
   useEffect(() => {
     getEvent();
     getTransactionLength();
-    // getValidation();
+    getValidationRecord()
   }, []);
 
   return (
@@ -235,6 +239,7 @@ const BuyTickets = () => {
             addToCart={true}
             selected={selected}
             setSelected={setSelected}
+            sold={validationRecord}
           />
           <div className="cart-container">
             <svg
