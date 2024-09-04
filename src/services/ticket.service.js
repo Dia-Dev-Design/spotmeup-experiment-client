@@ -33,3 +33,16 @@ export const sendEmailTickets = async (transactionId) => {
     throw error;
   }
 };
+
+
+export const findQrCodeTicket = async (eventId, qrCode) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/ticket/${eventId}/${qrCode}/validate`
+    );
+    // console.log("getAllTickets - Service:", response);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

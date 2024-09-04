@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { findEvent } from "../services/events.service";
 import QrScanner from "react-qr-scanner";
+import { findQrCodeTicket } from "../services/ticket.service";
 
 const ScanningTool = () => {
   const param = useParams();
@@ -9,6 +10,7 @@ const ScanningTool = () => {
   const [scanResult, setScanResult] = useState("");
   const [cameraActive, setCameraActive] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleFindEvent = async () => {
     try {
@@ -22,9 +24,26 @@ const ScanningTool = () => {
     }
   };
 
+  const findTickets = async (eventId, theCode) => {
+    try {
+      const response = await findQrCodeTicket(eventId, theCode);
+
+      console.log("Response Find Tickets:", response.ticketFound);
+    } catch (error) {
+      console.error("Find QR-Code Error:", error.response);
+      setErrorMessage(error.response.data.message);
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 30000);
+    }
+  };
+
   const handleScan = (data) => {
     if (data) {
       setScanResult(data.text);
+      findTickets(param.eventIdParam, data.text);
+
+      console.log("Scan Result Data:", data);
 
       setCameraActive(false);
 
@@ -45,7 +64,7 @@ const ScanningTool = () => {
       const id = setTimeout(() => {
         setCameraActive(false);
         setScanResult(null);
-      }, 20000); 
+      }, 20000);
 
       setTimeoutId(id);
     } else {
@@ -116,6 +135,7 @@ const ScanningTool = () => {
         <div className="scan-resul-container">
           <h2 className="scan-result-key">Scan Result</h2>
           <p className="scan-result-value">{scanResult}</p>
+          {errorMessage && <h1 className="scanning-error">{errorMessage}</h1>}
         </div>
       )}
     </div>
