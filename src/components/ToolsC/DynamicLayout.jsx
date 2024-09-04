@@ -11,10 +11,11 @@ const DynamicLayout = ({
   addToCart,
   selected,
   setSelected,
-  sold
+  validationRecords,
 }) => {
   const [layoutObject, setlayoutObject] = useState({});
   const { ticketsCart } = useContext(TicketsContext);
+
   const blockRef = useRef(null);
   const tableRef = useRef(null);
 
@@ -45,6 +46,12 @@ const DynamicLayout = ({
       return num.toString();
     }
   };
+
+  const soldTables = validationRecords?.tables
+    ?.filter((table) => table.sold === true)
+    .map((table) => table.tableId);
+
+  console.log("Tables Sold:", soldTables);
 
   const handleSelect = (
     tixId,
@@ -130,13 +137,13 @@ const DynamicLayout = ({
               width: `${block?.width * scale}px`,
               height: `${block?.height * scale}px`,
               backgroundColor: `${block?.backgroundColor}`,
+              display: "flex",
               left: `${block?.x * scale}px`,
               top: `${block?.y * scale}px`,
               justifyContent: `${block?.justifyContent}`,
               alignItems: `${block?.alignItems}`,
               color: `${block?.color}`,
               border: `${block?.borderSize}px solid ${block?.borderColor}`,
-              display: "flex",
               cursor: "pointer",
               opacity: selected?.id === `${block._id}` ? "0.5" : "1",
             }}
@@ -156,7 +163,7 @@ const DynamicLayout = ({
             }
             key={index}
             className={`dasboard-table-hover click-inside ${
-              ticketsCart.some((ticket) => ticket.id === block._id) 
+              ticketsCart.some((ticket) => ticket.id === block._id)
                 ? "isInCart"
                 : ""
             }`}
@@ -204,9 +211,10 @@ const DynamicLayout = ({
                     opacity: selected?.id === `${table._id}` ? "0.7" : "1",
                   }}
                   className={`dashboard-table-number-parent click-inside ${
-                    ticketsCart.some((ticket) => ticket.id === table._id) 
-                    // || sold.tables.find((table) => table.tableId === table._id).sold
-                      ? "isInCart"
+                    soldTables?.includes(table._id) ||
+                    ticketsCart.some((ticket) => ticket.id === table._id)
+                      ? 
+                        "isInCart"
                       : ""
                   }`}
                   ref={tableRef}
@@ -230,6 +238,7 @@ const DynamicLayout = ({
                   {tooltip && (
                     <div
                       className={
+                        soldTables?.includes(table._id) ||
                         selected?.id === table?._id
                           ? "dashboard-tooltip-selected"
                           : "dashboard-tooltip"

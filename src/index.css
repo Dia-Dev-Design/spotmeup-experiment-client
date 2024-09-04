@@ -6518,7 +6518,7 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .isInCart {
-  /* pointer-events: none; */
+  pointer-events: none;
   cursor: not-allowed !important;
   opacity: 0.5 !important;
 }

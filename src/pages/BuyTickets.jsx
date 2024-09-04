@@ -239,7 +239,7 @@ const BuyTickets = () => {
             addToCart={true}
             selected={selected}
             setSelected={setSelected}
-            sold={validationRecord}
+            validationRecords={validationRecord}
           />
           <div className="cart-container">
             <svg
