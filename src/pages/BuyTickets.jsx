@@ -38,6 +38,7 @@ const BuyTickets = () => {
   const [transactionId, setTransactionId] = useState("");
   const [email, setEmail] = useState("");
   const [emailPrompt, setEmailPrompt] = useState("");
+  const [limitReachMessage, setLimitReachMessage] = useState("");
 
   const [validationRecord, setValidationRecord] = useState(null);
 
@@ -65,6 +66,8 @@ const BuyTickets = () => {
     const newCargoServicio = total * 0.1;
     setCargoServicio(newCargoServicio);
   };
+
+  // console.log("Ticket Selected:", selected);
 
   const getEvent = async () => {
     try {
@@ -100,9 +103,10 @@ const BuyTickets = () => {
   };
 
   const handleAddToCart = () => {
-    console.log("Adding to cart Dustin:", selected);
     let newCartTickets = [...ticketsCart, selected];
+    console.log("New Cart Tickets:", newCartTickets);
     setTicketsCart(newCartTickets);
+
     setSelected({
       id: "",
       price: 0,
@@ -137,9 +141,22 @@ const BuyTickets = () => {
   };
 
   const addQuantityToTicket = (ticketId) => {
+    // console.log("ticketsCart:", ticketsCart);
+
     let updatedTickets = ticketsCart.map((ticket) => {
       if (ticket.id === ticketId) {
         const newQuantity = (ticket.tixToGenerate || 0) + 1;
+
+        if (newQuantity > ticket.maxTickets) {
+          setLimitReachMessage("Limit Reached !!!");
+
+          setTimeout(() => {
+            setLimitReachMessage(null);
+          }, 3000);
+
+          return ticket;
+        }
+
         const pricePerTicket = ticket.price / ticket.tixToGenerate;
         const newPrice = newQuantity * pricePerTicket;
 
@@ -153,8 +170,9 @@ const BuyTickets = () => {
     });
 
     setTicketsCart(updatedTickets);
-    console.log("Ticket updated with new price!", updatedTickets);
   };
+
+  console.log("Tickets Cart:", ticketsCart);
 
   const calculateAuthHash = () => {
     const secretKey =
@@ -323,6 +341,10 @@ const BuyTickets = () => {
                 onChange={handleInputChange}
                 className="email-transaction-input"
               />
+
+              {limitReachMessage && (
+                <h1 className="limit-reach-message">{limitReachMessage}</h1>
+              )}
             </div>
             <div className="quantity-included-container-parent">
               <div className="quantity-included-container">
@@ -334,6 +356,7 @@ const BuyTickets = () => {
             </div>
           </div>
         )}
+
         {ticketsCart.length > 0 && (
           <div>
             <div className="buy-tickets-form">
@@ -362,7 +385,11 @@ const BuyTickets = () => {
                       ${formatNumberWithCommas(ticket.price)}
                       {!ticket.hasTables && (
                         <button
-                          className="add-from-cart"
+                          className={
+                            ticket.tixToGenerate >= ticket.maxTickets
+                              ? "add-from-cart none-events"
+                              : "add-from-cart"
+                          }
                           onClick={() => addQuantityToTicket(ticket.id)}
                         >
                           +

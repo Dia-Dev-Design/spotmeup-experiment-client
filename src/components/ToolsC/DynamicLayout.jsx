@@ -75,6 +75,16 @@ const DynamicLayout = ({
     });
   };
 
+  const findTicketsAvailable = (blockId) => {
+    const blockAvailability = validationRecords.areas.find(
+      (area) => area.blockId === blockId
+    );
+
+    console.log("Block Availability:", blockAvailability);
+
+    return blockAvailability ? blockAvailability.quantity : 0;
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       const isClickInside = event.target.closest(".click-inside");
@@ -149,16 +159,19 @@ const DynamicLayout = ({
             }}
             onClick={
               !block.tables.length
-                ? () =>
+                ? () => {
+                    const availableTickets = findTicketsAvailable(block._id);
+
                     handleSelect(
                       block._id,
                       block.bprice,
                       false,
-                      block.btickets,
+                      availableTickets,
                       block.name,
                       1,
                       block._id
-                    )
+                    );
+                  }
                 : undefined
             }
             key={index}
