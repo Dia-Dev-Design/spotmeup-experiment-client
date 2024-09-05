@@ -39,7 +39,7 @@ const BuyTickets = () => {
   const [email, setEmail] = useState("");
   const [emailPrompt, setEmailPrompt] = useState("");
 
-  const [validationRecord, setValidationRecord] = useState(null)
+  const [validationRecord, setValidationRecord] = useState(null);
 
   const handleCheckoutTab = () => {
     setCheckoutTab((prev) => !prev);
@@ -66,8 +66,6 @@ const BuyTickets = () => {
     setCargoServicio(newCargoServicio);
   };
 
-
-
   const getEvent = async () => {
     try {
       const response = await findEvent(param.eventIdParam);
@@ -91,14 +89,15 @@ const BuyTickets = () => {
   };
 
   const getValidationRecord = async () => {
+    const foundValidation = await findValidationInEvent(param.eventIdParam);
 
-    const foundValidation = await findValidationInEvent(param.eventIdParam)
+    console.log(
+      "This is the found validation record =======>",
+      foundValidation
+    );
 
-    console.log("This is the found validation record =======>", foundValidation)
-
-    setValidationRecord(foundValidation.validation)
-
-  }
+    setValidationRecord(foundValidation.validation);
+  };
 
   const handleAddToCart = () => {
     console.log("Adding to cart Dustin:", selected);
@@ -117,16 +116,44 @@ const BuyTickets = () => {
   };
 
   const handleRemoveFromCart = (index) => {
-    const newTickets = ticketsCart.filter((ticket, i) => i !== index);
-    console.log("This is the tickets lenght", newTickets.length);
+    const newTickets = [...ticketsCart];
+    const ticket = newTickets[index];
+
+    if (ticket.hasTables === false) {
+      if (ticket.tixToGenerate > 1) {
+        const pricePerTicket = ticket.price / ticket.tixToGenerate;
+        ticket.tixToGenerate -= 1;
+        ticket.price = ticket.tixToGenerate * pricePerTicket;
+      } else {
+        newTickets.splice(index, 1);
+      }
+    } else {
+      newTickets.splice(index, 1);
+      console.log("No se puede disminuir este ticket porque tiene mesas.");
+    }
+
     setTicketsCart(newTickets);
+    console.log("Ticket removed or quantity decreased!", newTickets);
   };
 
   const addQuantityToTicket = (ticketId) => {
-    let thisTicket = ticketsCart.find((ticket, i) => ticket.id === ticketId);
-    let updatedTickets = [...ticketsCart, thisTicket];
+    let updatedTickets = ticketsCart.map((ticket) => {
+      if (ticket.id === ticketId) {
+        const newQuantity = (ticket.tixToGenerate || 0) + 1;
+        const pricePerTicket = ticket.price / ticket.tixToGenerate;
+        const newPrice = newQuantity * pricePerTicket;
+
+        return {
+          ...ticket,
+          tixToGenerate: newQuantity,
+          price: newPrice,
+        };
+      }
+      return ticket;
+    });
+
     setTicketsCart(updatedTickets);
-    console.log("WE've found a Ticket!!!!", thisTicket);
+    console.log("Ticket updated with new price!", updatedTickets);
   };
 
   const calculateAuthHash = () => {
@@ -157,7 +184,6 @@ const BuyTickets = () => {
     return hash.toString(CryptoJS.enc.Hex);
   };
 
-
   const handleTransaction = async () => {
     try {
       if (!email) {
@@ -173,14 +199,16 @@ const BuyTickets = () => {
           discount: 0,
           tax: cargoServicio,
           total: total + cargoServicio,
-          description: `${ticketsCart.length} ${ticketsCart.length > 1 ? 'tickets' : 'ticket'} for ${event.name}.`,
+          description: `${ticketsCart.length} ${
+            ticketsCart.length > 1 ? "tickets" : "ticket"
+          } for ${event.name}.`,
           status: "pending",
           items: ticketsCart,
           email: email,
         };
 
         const response = await createTransaction(transactionBody);
-        console.log("This is the response on 178 ========>", response)
+        console.log("This is the response on 178 ========>", response);
         if (response.success) {
           setTransactionId(response.transaction._id);
           console.log("CreateTransaction - Success:", response);
@@ -191,8 +219,6 @@ const BuyTickets = () => {
       console.error("CreateTransaction - Success:", error.response);
     }
   };
-
-  
 
   const handleInputChange = (e) => {
     const { value } = e.target;
@@ -221,8 +247,14 @@ const BuyTickets = () => {
   useEffect(() => {
     getEvent();
     getTransactionLength();
-    getValidationRecord()
+    getValidationRecord();
   }, []);
+
+  // const blockAvailability = validationRecord.areas;
+
+  // console.log("Block Availability:", blockAvailability);
+
+  console.log("Tickets Cart:", ticketsCart && ticketsCart);
 
   return (
     <div>

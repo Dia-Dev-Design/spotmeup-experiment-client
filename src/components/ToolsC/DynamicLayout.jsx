@@ -51,7 +51,7 @@ const DynamicLayout = ({
     ?.filter((table) => table.sold === true)
     .map((table) => table.tableId);
 
-  console.log("Tables Sold:", soldTables);
+  // console.log("Tables Sold:", soldTables);
 
   const handleSelect = (
     tixId,
@@ -213,8 +213,7 @@ const DynamicLayout = ({
                   className={`dashboard-table-number-parent click-inside ${
                     soldTables?.includes(table._id) ||
                     ticketsCart.some((ticket) => ticket.id === table._id)
-                      ? 
-                        "isInCart"
+                      ? "isInCart"
                       : ""
                   }`}
                   ref={tableRef}
@@ -250,12 +249,14 @@ const DynamicLayout = ({
                         }%`,
                       }}
                     >
-                      <h2 className="dashboard-tooltip-size">
-                        <span className="dollar-span">$</span>
-                        {formatPrices
-                          ? formatNumber(table.tprice)
-                          : table.tprice}
-                      </h2>
+                      {!soldTables?.includes(table._id) && (
+                        <h2 className="dashboard-tooltip-size">
+                          <span className="dollar-span">$</span>
+                          {formatPrices
+                            ? formatNumber(table.tprice)
+                            : table.tprice}
+                        </h2>
+                      )}
                     </div>
                   )}
                 </div>
