@@ -109,15 +109,15 @@ const Approved = () => {
           {tickets?.length ? (
             <>
               {tickets?.map((ticket, index) => (
-                <div key={ticket?._id}>
-                  <span className="qr-seperator"></span>
+                <div key={ticket?._id} className="qr-code-container-border">
+                  {/* <span className="qr-seperator"></span> */}
                   <QRCode
                     value={ticket?.qrCode}
                     key={index}
                     className="qr-code-approved"
                   />
-                  <h1 className="ticket-name-qr">{ticket?.name}</h1>
-                  <span className="qr-seperator"></span>
+                  <h1 className="ticket-name-qr">{ticket?.name} - #{index+1}</h1>
+                  {/* <span className="qr-seperator"></span> */}
                 </div>
               ))}
             </>

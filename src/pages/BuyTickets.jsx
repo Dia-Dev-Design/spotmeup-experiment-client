@@ -129,11 +129,11 @@ const BuyTickets = () => {
       }
     } else {
       newTickets.splice(index, 1);
-      console.log("No se puede disminuir este ticket porque tiene mesas.");
+      // console.log("No se puede disminuir este ticket porque tiene mesas.");
     }
 
     setTicketsCart(newTickets);
-    console.log("Ticket removed or quantity decreased!", newTickets);
+    // console.log("Ticket removed or quantity decreased!", newTickets);
   };
 
   const addQuantityToTicket = (ticketId) => {
@@ -254,7 +254,7 @@ const BuyTickets = () => {
 
   // console.log("Block Availability:", blockAvailability);
 
-  console.log("Tickets Cart:", ticketsCart && ticketsCart);
+  // console.log("Tickets Cart:", ticketsCart && ticketsCart);
 
   return (
     <div>

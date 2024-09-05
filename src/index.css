@@ -6910,6 +6910,11 @@ input[type="color"]::-webkit-color-swatch {
   display: flex;
   justify-content: flex-start;
   overflow-x: scroll;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  padding-bottom: 1rem;
 }
 
 .qr-code-container-two {
@@ -7158,4 +7163,8 @@ input[type="color"]::-webkit-color-swatch {
 
 .form-header-price {
   width: 60px;
+}
+
+.qr-code-container-border {
+  border: 2px solid black;
 }
