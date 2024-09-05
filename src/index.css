@@ -7068,6 +7068,15 @@ input[type="color"]::-webkit-color-swatch {
   font-size: 40px;
 }
 
+.scanning-valid {
+  color: blue;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-weight: 600;
+  font-size: 40px;
+  margin: 0 auto;
+  margin-bottom: 2rem;
+}
+
 .video-camera-container {
   display: flex;
   flex-direction: column;
@@ -7172,7 +7181,7 @@ input[type="color"]::-webkit-color-swatch {
   color: red;
   font-size: 1rem;
   margin: 1rem 0rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.5;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
   font-style: italic;

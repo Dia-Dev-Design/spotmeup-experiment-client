@@ -11,6 +11,7 @@ const ScanningTool = () => {
   const [cameraActive, setCameraActive] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [acceptedMessage, setAcceptedMessage] = useState("");
 
   const handleFindEvent = async () => {
     try {
@@ -28,7 +29,15 @@ const ScanningTool = () => {
     try {
       const response = await findQrCodeTicket(eventId, theCode);
 
-      console.log("Response Find Tickets:", response.ticketFound);
+      if (response.success) {
+        setAcceptedMessage(response.message);
+      }
+
+      setTimeout(() => {
+        setAcceptedMessage("");
+      }, 5000);
+
+      console.log("Response Find Tickets:", response);
     } catch (error) {
       console.error("Find QR-Code Error:", error.response);
       setErrorMessage(error.response.data.message);
@@ -120,14 +129,19 @@ const ScanningTool = () => {
               </button>
             </div>
           ) : (
-            <button
-              onClick={handleCameraToggle}
-              className={`scan-button ${
-                cameraActive ? "scan-button-hidden" : ""
-              }`}
-            >
-              Click To Scan
-            </button>
+            <>
+              {acceptedMessage && (
+                <h1 className="scanning-valid">{acceptedMessage}</h1>
+              )}
+              <button
+                onClick={handleCameraToggle}
+                className={`scan-button ${
+                  cameraActive ? "scan-button-hidden" : ""
+                }`}
+              >
+                Click To Scan
+              </button>
+            </>
           )}
         </div>
       )}

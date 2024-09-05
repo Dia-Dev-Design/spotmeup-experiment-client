@@ -386,7 +386,7 @@ const BuyTickets = () => {
                       {!ticket.hasTables && (
                         <button
                           className={
-                            ticket.tixToGenerate >= ticket.maxTickets
+                            ticket.tixToGenerate > ticket.maxTickets
                               ? "add-from-cart none-events"
                               : "add-from-cart"
                           }
