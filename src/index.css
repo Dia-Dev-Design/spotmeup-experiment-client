@@ -7186,3 +7186,71 @@ input[type="color"]::-webkit-color-swatch {
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
   font-style: italic;
 }
+
+.view-tickets-prompt {
+  display: flex;
+  margin: 0 auto;
+  justify-content: space-between;
+  width: 50%;
+  margin-top: 1rem;
+}
+
+.past-next-container {
+  /* background-color: black; */
+  margin: 2rem 2rem;
+}
+
+.past-next-title {
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  /* background-color: black; */
+  cursor: pointer;
+}
+
+.past-next-events-map:hover {
+  opacity: 0.5;
+}
+
+.preview-ticket-logo-flyer {
+  max-width: 200px;
+  max-height: 200px;
+  border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+.past-next-title-font {
+  margin-bottom: 1rem;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: 600;
+  font-size: 2rem;
+  color: black;
+}
+
+.past-next-events-map {
+  display: flex;
+  /* gap: 1rem; */
+}
+
+.past-next-name {
+  color: black;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin-bottom: 0.2rem;
+}
+
+.past-next-field {
+  color: rgb(150, 147, 147);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+.past-next-right-side {
+  background-color: white;
+  padding: 0.2rem 1rem;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  min-width: 200px;
+}

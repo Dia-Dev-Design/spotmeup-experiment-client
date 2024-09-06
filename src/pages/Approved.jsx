@@ -1,14 +1,10 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { findEvent } from "../services/events.service";
-import { TicketsContext } from "../context/tickets.context";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { QRCode } from "react-qrcode-logo";
-import QrScanner from "react-qr-scanner";
 import { findTransaction } from "../services/transaction.service";
-import { createTicket } from "../services/ticket.service";
-import { getAllTicketInTransaction } from "../services/ticket.service";
 import { sendEmailTickets } from "../services/ticket.service";
-import { updateValidationStatus } from "../services/validation.service";
+import NavBar from "../components/ToolsC/NavBar";
 
 const Approved = () => {
   const param = useParams();
@@ -16,8 +12,8 @@ const Approved = () => {
   const [transaction, setTransaction] = useState(null);
   const [transactionId, setTransactionId] = useState("");
   const [event, setEvent] = useState(null);
-
   const [tickets, setTickets] = useState([]);
+  const navigate = useNavigate();
 
   const [emailSuccess, setEmailSuccess] = useState(false);
   const [emailFailed, setEmailFailed] = useState(false);
@@ -27,7 +23,12 @@ const Approved = () => {
     let foundEvent = await findEvent(param.eventIdParam);
 
     setTransaction(foundTransaction.transaction);
+    console.log("Found Transaction:", foundTransaction);
     setTransactionId(foundTransaction.transaction._id);
+    // const ticketsTrans = await getAllTicketInTransaction(
+    //   param.transactionIdParam
+    // );
+    // console.log("Tickets in transaction:", ticketsTrans);
     setEvent(foundEvent.event);
   };
 
@@ -90,10 +91,15 @@ const Approved = () => {
     }
   }, [transactionId]);
 
-  console.log("Tickets:", tickets);
+  const handleViewTickets = () => {
+    navigate(`/view-tickets/${param.eventIdParam}/${param.transactionIdParam}`);
+  };
+
+  // console.log("Tickets:", tickets);
 
   return (
     <div>
+      <NavBar />
       <h1 className="approved-page">Approved Page - Summary</h1>
       <div className="approved-summary">
         <div className="summary-event-container">
@@ -116,7 +122,9 @@ const Approved = () => {
                     key={index}
                     className="qr-code-approved"
                   />
-                  <h1 className="ticket-name-qr">{ticket?.name} - #{index+1}</h1>
+                  <h1 className="ticket-name-qr">
+                    {ticket?.name} - #{index + 1}
+                  </h1>
                   {/* <span className="qr-seperator"></span> */}
                 </div>
               ))}
@@ -137,9 +145,10 @@ const Approved = () => {
           )}
         </div>
       </div>
-      <button style={{ marginLeft: "40%" }} onClick={() => sendEmail()}>
-        Send Tickets To Email
-      </button>
+      <div className="view-tickets-prompt">
+        {/* <button onClick={() => sendEmail()}>Send Tickets To Email</button> */}
+        <button onClick={handleViewTickets}>View My Tickets</button>
+      </div>
       {emailSuccess && <h2 className="email-sucess">{emailSuccess}</h2>}
       {emailFailed && (
         <div className="resend-email-failed">

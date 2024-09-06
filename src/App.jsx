@@ -7,6 +7,7 @@ import Approved from "./pages/Approved.jsx";
 import ScanningTool from "./pages/ScanningTool.jsx";
 import MustLogin from "./components/LogInC/MustLogin.jsx";
 import { NavItem } from "react-bootstrap";
+import TicketsPage from "./pages/TicketsPage.jsx";
 
 const SignUp = lazy(() => import("./pages/SignUp"));
 const LogIn = lazy(() => import("./pages/LogIn"));
@@ -84,6 +85,10 @@ function App() {
           <Route
             path="/approved/:eventIdParam/:transactionIdParam"
             element={<Approved />}
+          />
+          <Route
+            path="/view-tickets/:eventIdParam/:transactionIdParam"
+            element={<TicketsPage />}
           />
         </Route>
 

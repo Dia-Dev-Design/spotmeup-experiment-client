@@ -10,14 +10,13 @@ import {
   getTransactionCount,
 } from "../services/transaction.service";
 import CryptoJS from "crypto-js";
-
 import { API_URL } from "../services/api.service";
-
 import { findValidationInEvent } from "../services/validation.service";
+import { AuthContext } from "../context/auth.context";
 
 const BuyTickets = () => {
   const param = useParams();
-  // console.log("eventIdParam:", param.eventIdParam);
+  const { user } = useContext(AuthContext);
   const { ticketsCart, setTicketsCart } = useContext(TicketsContext);
   const [selected, setSelected] = useState({
     id: "",
@@ -222,6 +221,7 @@ const BuyTickets = () => {
           } for ${event.name}.`,
           status: "pending",
           items: ticketsCart,
+          buyer: user?._id,
           email: email,
         };
 
