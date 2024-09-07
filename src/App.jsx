@@ -87,7 +87,7 @@ function App() {
             element={<Approved />}
           />
           <Route
-            path="/view-tickets/:eventIdParam/:transactionIdParam"
+            path="/view-tickets"
             element={<TicketsPage />}
           />
         </Route>

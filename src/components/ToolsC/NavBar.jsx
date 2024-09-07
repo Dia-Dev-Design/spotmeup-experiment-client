@@ -2,9 +2,9 @@ import React, { useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SpotMeUpIcon from "./SpotMeUpIcon";
 
-import homeIcon from '../../assets/home_icon.svg'
-import promotersIcon from '../../assets/promoters_icon.svg'
-import profileIcon from '../../assets/profile_icon.svg'
+import homeIcon from "../../assets/home_icon.svg";
+import promotersIcon from "../../assets/promoters_icon.svg";
+import profileIcon from "../../assets/profile_icon.svg";
 
 import { AuthContext } from "../../context/auth.context";
 import { authenticateUser } from "../../services/auth.service";
@@ -22,7 +22,6 @@ const NavBar = () => {
     }
   };
 
-
   const removeToken = () => {
     console.log("Token Removed");
     localStorage.removeItem("authToken");
@@ -37,8 +36,7 @@ const NavBar = () => {
     <nav className="navbar-container">
       <div className="navbar-subcontainer">
         <div className="home-icon-container">
-
-{/* 
+          {/* 
           <Link to="/">
             <img src={homeIcon}  alt="home-icon"/>
             <svg
@@ -64,14 +62,7 @@ const NavBar = () => {
         </div>
 
         <div className="promoters-link promoters-icon-container">
-
-{/* 
-          <Link to="/myevents">
-
-            <img src={promotersIcon} alt='promoters-icon'/>
-           
-          </Link>
-           */}
+        
 
           <Link to={isLoggedIn ? "/myevents" : "/signup"} className="navlink">
             Promoters
@@ -83,11 +74,13 @@ const NavBar = () => {
           </Link>
         </div>
         <div className="profile-icon-container">
-
-          {/* <img src={profileIcon}  alt="profile-icon"/> */}
-
           <Link to="/profile" className="navlink">
             Profile
+          </Link>
+        </div>
+        <div className="profile-icon-container">
+          <Link to="/view-tickets" className="navlink">
+            Tickets
           </Link>
         </div>
 

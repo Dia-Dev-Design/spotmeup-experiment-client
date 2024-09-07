@@ -5559,24 +5559,28 @@ input[type="color"]::-webkit-color-swatch {
 
 .event-venue-container {
   width: 90%;
-  height: 90%;
+  height: 100%;
   background-color: white;
   border: 1px solid black;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: scroll;
+}
+
+.event-venue-container-parent {
+  display: flex;
+  justify-content: center;
+  /* height: 500px; */
+  height: 80%;
+  overflow: hidden;
 }
 
 .events-venue-field {
   color: black;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   font-weight: 300;
-}
-
-.event-venue-container-parent {
-  display: flex;
-  justify-content: center;
 }
 
 .events-venue-border {
@@ -7220,7 +7224,7 @@ input[type="color"]::-webkit-color-swatch {
 
 .past-next-title-font {
   margin-bottom: 1rem;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   font-weight: 600;
   font-size: 2rem;
   color: black;
@@ -7233,7 +7237,7 @@ input[type="color"]::-webkit-color-swatch {
 
 .past-next-name {
   color: black;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   font-weight: 600;
   font-size: 1.3rem;
   margin-bottom: 0.2rem;
@@ -7241,7 +7245,7 @@ input[type="color"]::-webkit-color-swatch {
 
 .past-next-field {
   color: rgb(150, 147, 147);
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   font-weight: 400;
   font-size: 1rem;
   margin-bottom: 0.2rem;
@@ -7253,4 +7257,19 @@ input[type="color"]::-webkit-color-swatch {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   min-width: 200px;
+}
+
+.past-next-carousel {
+  display: flex;
+  gap: 1rem;
+}
+
+.display-events-carousel {
+  margin: 0rem 1rem;
+}
+
+.display-events-text-carousel {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: 400;
+  padding-left: 1rem;
 }

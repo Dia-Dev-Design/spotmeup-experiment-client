@@ -27,6 +27,7 @@ const BuyTickets = () => {
     tixToGenerate: 1,
     blockId: "",
     tixIncluded: 0,
+    tableCapacity: 0,
   });
   const [event, setEvent] = useState();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 760);
@@ -171,7 +172,7 @@ const BuyTickets = () => {
     setTicketsCart(updatedTickets);
   };
 
-  console.log("Tickets Cart:", ticketsCart);
+  // console.log("Tickets Cart:", ticketsCart);
 
   const calculateAuthHash = () => {
     const secretKey =
@@ -203,12 +204,12 @@ const BuyTickets = () => {
 
   const handleTransaction = async () => {
     try {
-      if (!email) {
-        setEmailPrompt("Email must be filled");
-        setTimeout(() => {
-          setEmailPrompt("");
-        }, 3000);
-      } else {
+      // if (!email) {
+      //   setEmailPrompt("Email must be filled");
+      //   setTimeout(() => {
+      //     setEmailPrompt("");
+      //   }, 3000);
+      // } else {
         const transactionBody = {
           transactionNumber: transactionLength,
           paymentMethod: "Prueba Azul",
@@ -222,7 +223,6 @@ const BuyTickets = () => {
           status: "pending",
           items: ticketsCart,
           buyer: user?._id,
-          email: email,
         };
 
         const response = await createTransaction(transactionBody);
@@ -232,7 +232,7 @@ const BuyTickets = () => {
           console.log("CreateTransaction - Success:", response);
           setCheckoutTab(true);
         }
-      }
+      // }
     } catch (error) {
       console.error("CreateTransaction - Success:", error.response);
     }
@@ -327,10 +327,13 @@ const BuyTickets = () => {
           </div>
         </div>
 
+        {limitReachMessage && (
+          <h1 className="limit-reach-message">{limitReachMessage}</h1>
+        )}
         {ticketsCart.length > 0 && (
           <div>
             <div className="email-container-buytickets">
-              {emailPrompt && <h2 className="email-prompt">{emailPrompt}</h2>}
+              {/* {emailPrompt && <h2 className="email-prompt">{emailPrompt}</h2>}
               <label htmlFor="email" className="email-title-tickets">
                 ¿Donde enviamos los tickets?
               </label>
@@ -340,17 +343,14 @@ const BuyTickets = () => {
                 name="email"
                 onChange={handleInputChange}
                 className="email-transaction-input"
-              />
+              /> */}
 
-              {limitReachMessage && (
-                <h1 className="limit-reach-message">{limitReachMessage}</h1>
-              )}
             </div>
             <div className="quantity-included-container-parent">
               <div className="quantity-included-container">
                 <h1>Description</h1>
                 <h1>Included</h1>
-                <h1>Qty</h1>
+                <h1>Tix</h1>
                 <h1 className="form-header-price">Price</h1>
               </div>
             </div>
@@ -368,12 +368,12 @@ const BuyTickets = () => {
                   >
                     <h1 className="ticket-selected-form">{ticket.name}</h1>
                     <h1>{ticket.tixIncluded}</h1>
-                    {ticket.name === "General Area" ? (
+                    {ticket.hasTables ? (
                       <h1>
-                        {ticketsCart.reduce((a, b) => a + b.tixToGenerate, 0)}
+                        {ticket.tixIncluded}/{ticket.tableCapacity}
                       </h1>
                     ) : (
-                      <h1>{ticket.tixToGenerate || ticket.maxTickets}</h1>
+                      <h1>{ticket.tixToGenerate}</h1>
                     )}
                     <h1 className="cart-btns">
                       <button

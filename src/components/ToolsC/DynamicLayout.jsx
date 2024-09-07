@@ -61,7 +61,8 @@ const DynamicLayout = ({
     tixName,
     tixAmount,
     tixBlockId,
-    includedTickets
+    includedTickets,
+    capacityTable
   ) => {
     setSelected({
       id: tixId,
@@ -72,6 +73,7 @@ const DynamicLayout = ({
       tixToGenerate: tixAmount,
       blockId: tixBlockId,
       tixIncluded: includedTickets,
+      tableCapacity: capacityTable,
     });
   };
 
@@ -239,7 +241,8 @@ const DynamicLayout = ({
                       `Block-${block.name} Table-${table.number}`,
                       table?.ticketsIncluded,
                       table.block,
-                      table?.ticketsIncluded
+                      table?.ticketsIncluded,
+                      table?.maxCapacity
                     )
                   }
                 >

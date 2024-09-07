@@ -92,7 +92,7 @@ const Approved = () => {
   }, [transactionId]);
 
   const handleViewTickets = () => {
-    navigate(`/view-tickets/${param.eventIdParam}/${param.transactionIdParam}`);
+    navigate(`/view-tickets`);
   };
 
   // console.log("Tickets:", tickets);
@@ -146,7 +146,7 @@ const Approved = () => {
         </div>
       </div>
       <div className="view-tickets-prompt">
-        {/* <button onClick={() => sendEmail()}>Send Tickets To Email</button> */}
+        <button onClick={() => sendEmail()}>Send Tickets To Email</button>
         <button onClick={handleViewTickets}>View My Tickets</button>
       </div>
       {emailSuccess && <h2 className="email-sucess">{emailSuccess}</h2>}

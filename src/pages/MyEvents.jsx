@@ -168,8 +168,9 @@ const MyEvents = () => {
               <h1 className="or">or</h1>
               <AddNewEvent />
             </div>
-
-            <DisplayEvents />
+            <div className="display-events-carousel">
+              <DisplayEvents />
+            </div>
 
             {/* <Draggable
               bounds={{
