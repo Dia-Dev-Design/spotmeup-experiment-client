@@ -28,6 +28,8 @@ const BuyTickets = () => {
     blockId: "",
     tixIncluded: 0,
     tableCapacity: 0,
+    extraTicketsPrice: 0,
+    extraTicketsQuantity: 0,
   });
   const [event, setEvent] = useState();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 760);
@@ -116,6 +118,7 @@ const BuyTickets = () => {
       tixToGenerate: 1,
       blockId: "",
       tixIncluded: 0,
+      extraTicketsQuantity: 0,
     });
   };
 
@@ -131,48 +134,86 @@ const BuyTickets = () => {
       } else {
         newTickets.splice(index, 1);
       }
+    } else if (ticket.hasTables) {
+      if (ticket.ticketsExtraQuantity > 0) {
+        ticket.tixToGenerate -= 1;
+        ticket.ticketsExtraQuantity -= 1;
+        ticket.price -= ticket.ticketsExtraPrice;
+      } else {
+        newTickets.splice(index, 1);
+      }
     } else {
       newTickets.splice(index, 1);
-      // console.log("No se puede disminuir este ticket porque tiene mesas.");
     }
 
     setTicketsCart(newTickets);
-    // console.log("Ticket removed or quantity decreased!", newTickets);
   };
 
   const addQuantityToTicket = (ticketId) => {
-    // console.log("ticketsCart:", ticketsCart);
-
     let updatedTickets = ticketsCart.map((ticket) => {
+      if (!ticket || !ticket.id) return ticket;
+
       if (ticket.id === ticketId) {
-        const newQuantity = (ticket.tixToGenerate || 0) + 1;
+        // Si el ticket tiene mesas (hasTables: true)
+        if (ticket.hasTables) {
+          const newQuantity = (ticket.ticketsExtraQuantity || 0) + 1;
 
-        if (newQuantity > ticket.maxTickets) {
-          setLimitReachMessage("Limit Reached !!!");
+          // Verificar si se supera la capacidad de la mesa
+          if (newQuantity + ticket.tixIncluded > ticket.tableCapacity) {
+            setLimitReachMessage("Limit Reached !!!");
 
-          setTimeout(() => {
-            setLimitReachMessage(null);
-          }, 3000);
+            setTimeout(() => {
+              setLimitReachMessage(null);
+            }, 3000);
 
-          return ticket;
+            return ticket;
+          }
+
+          // Calcular el nuevo precio por tickets extra
+          const pricePerExtraTicket = ticket.ticketsExtraPrice || 0;
+          const newPrice = ticket.price + pricePerExtraTicket;
+
+          return {
+            ...ticket,
+            tixToGenerate: newQuantity + ticket.tixIncluded, // Actualiza la cantidad total generada
+            ticketsExtraQuantity: newQuantity, // Actualiza la cantidad de tickets extra
+            price: newPrice, // Actualiza el precio total
+          };
+
+          // Si el ticket no tiene mesas (hasTables: false)
+        } else {
+          const newQuantity = (ticket.tixToGenerate || 0) + 1;
+
+          // Verificar si se supera el número máximo de tickets
+          if (newQuantity > ticket.maxTickets) {
+            setLimitReachMessage("Limit Reached !!!");
+
+            setTimeout(() => {
+              setLimitReachMessage(null);
+            }, 3000);
+
+            return ticket;
+          }
+
+          // Calcular el nuevo precio por ticket
+          const pricePerTicket = ticket.price / ticket.tixToGenerate;
+          const newPrice = newQuantity * pricePerTicket;
+
+          return {
+            ...ticket,
+            tixToGenerate: newQuantity, // Actualiza la cantidad de tickets generados
+            price: newPrice, // Actualiza el precio total
+          };
         }
-
-        const pricePerTicket = ticket.price / ticket.tixToGenerate;
-        const newPrice = newQuantity * pricePerTicket;
-
-        return {
-          ...ticket,
-          tixToGenerate: newQuantity,
-          price: newPrice,
-        };
       }
+      // Devuelve el ticket sin modificar si no coincide el id
       return ticket;
     });
 
-    setTicketsCart(updatedTickets);
+    setTicketsCart(updatedTickets); // Actualizar el estado con los tickets actualizados
   };
 
-  // console.log("Tickets Cart:", ticketsCart);
+  console.log("Tickets Cart:", ticketsCart);
 
   const calculateAuthHash = () => {
     const secretKey =
@@ -210,37 +251,32 @@ const BuyTickets = () => {
       //     setEmailPrompt("");
       //   }, 3000);
       // } else {
-        const transactionBody = {
-          transactionNumber: transactionLength,
-          paymentMethod: "Prueba Azul",
-          subTotal: total,
-          discount: 0,
-          tax: cargoServicio,
-          total: total + cargoServicio,
-          description: `${ticketsCart.length} ${
-            ticketsCart.length > 1 ? "tickets" : "ticket"
-          } for ${event.name}.`,
-          status: "pending",
-          items: ticketsCart,
-          buyer: user?._id,
-        };
+      const transactionBody = {
+        transactionNumber: transactionLength,
+        paymentMethod: "Prueba Azul",
+        subTotal: total,
+        discount: 0,
+        tax: cargoServicio,
+        total: total + cargoServicio,
+        description: `${ticketsCart.length} ${
+          ticketsCart.length > 1 ? "tickets" : "ticket"
+        } for ${event.name}.`,
+        status: "pending",
+        items: ticketsCart,
+        buyer: user?._id,
+      };
 
-        const response = await createTransaction(transactionBody);
-        console.log("This is the response on 178 ========>", response);
-        if (response.success) {
-          setTransactionId(response.transaction._id);
-          console.log("CreateTransaction - Success:", response);
-          setCheckoutTab(true);
-        }
+      const response = await createTransaction(transactionBody);
+      console.log("This is the response on 178 ========>", response);
+      if (response.success) {
+        setTransactionId(response.transaction._id);
+        console.log("CreateTransaction - Success:", response);
+        setCheckoutTab(true);
+      }
       // }
     } catch (error) {
       console.error("CreateTransaction - Success:", error.response);
     }
-  };
-
-  const handleInputChange = (e) => {
-    const { value } = e.target;
-    setEmail((prevEmail) => value);
   };
 
   useEffect(() => {
@@ -344,7 +380,6 @@ const BuyTickets = () => {
                 onChange={handleInputChange}
                 className="email-transaction-input"
               /> */}
-
             </div>
             <div className="quantity-included-container-parent">
               <div className="quantity-included-container">
@@ -366,14 +401,15 @@ const BuyTickets = () => {
                     key={index}
                     className="tickets-selected-container ticket-selected-bg"
                   >
-                    <h1 className="ticket-selected-form">{ticket.name}</h1>
-                    <h1>{ticket.tixIncluded}</h1>
-                    {ticket.hasTables ? (
+                    <h1 className="ticket-selected-form">{ticket?.name}</h1>
+                    <h1>{ticket?.tixIncluded}</h1>
+                    {ticket?.hasTables ? (
                       <h1>
-                        {ticket.tixIncluded}/{ticket.tableCapacity}
+                        {ticket?.tixIncluded + ticket?.ticketsExtraQuantity}/
+                        {ticket?.tableCapacity}
                       </h1>
                     ) : (
-                      <h1>{ticket.tixToGenerate}</h1>
+                      <h1>{ticket?.tixToGenerate}</h1>
                     )}
                     <h1 className="cart-btns">
                       <button
@@ -382,26 +418,51 @@ const BuyTickets = () => {
                       >
                         -
                       </button>
-                      ${formatNumberWithCommas(ticket.price)}
-                      {!ticket.hasTables && (
+                      ${formatNumberWithCommas(ticket?.price)}
+                      {!ticket?.hasTables && (
                         <button
                           className={
-                            ticket.tixToGenerate > ticket.maxTickets
+                            ticket?.tixToGenerate > ticket?.maxTickets
                               ? "add-from-cart none-events"
                               : "add-from-cart"
                           }
-                          onClick={() => addQuantityToTicket(ticket.id)}
+                          onClick={() => addQuantityToTicket(ticket?.id)}
                         >
                           +
                         </button>
                       )}
-                      {ticket.hasTables && (
+                      {ticket?.hasTables && (
                         <button className="add-from-cart-invisible">+</button>
                       )}
                     </h1>
                   </div>
+                  {ticket?.hasTables && (
+                    <div className="extra-tickets-row">
+                      <h1>
+                        Add extra Tickets to this table for{" "}
+                        <span className="ticket-extra-price">
+                          ${ticket?.ticketsExtraPrice}
+                        </span>
+                      </h1>
+                      <button
+                        className="ticket-extra-add"
+                        onClick={() => addQuantityToTicket(ticket?.id)}
+                      >
+                        Add
+                      </button>
+                      {ticket.ticketsExtraQuantity > 0 && (
+                        <button
+                          className="ticket-remove-add"
+                          onClick={() => handleRemoveFromCart(index)}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
+
               <div className="tickets-selected-container ticket-selected-cargo">
                 <h1 className="bold">Cargo x Servicio:</h1>
                 <h1></h1>

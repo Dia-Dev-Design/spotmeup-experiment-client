@@ -62,7 +62,9 @@ const DynamicLayout = ({
     tixAmount,
     tixBlockId,
     includedTickets,
-    capacityTable
+    capacityTable,
+    extraTicketsPrice,
+    extraTicketsQuantity
   ) => {
     setSelected({
       id: tixId,
@@ -74,6 +76,8 @@ const DynamicLayout = ({
       blockId: tixBlockId,
       tixIncluded: includedTickets,
       tableCapacity: capacityTable,
+      ticketsExtraPrice: extraTicketsPrice,
+      ticketsExtraQuantity: extraTicketsQuantity,
     });
   };
 
@@ -171,7 +175,11 @@ const DynamicLayout = ({
                       availableTickets,
                       block.name,
                       1,
-                      block._id
+                      block._id,
+                      0,
+                      0,
+                      0,
+                      0
                     );
                   }
                 : undefined
@@ -238,11 +246,13 @@ const DynamicLayout = ({
                       table.tprice,
                       true,
                       1,
-                      `Block-${block.name} Table-${table.number}`,
+                      `Table-${table.number}`,
                       table?.ticketsIncluded,
                       table.block,
                       table?.ticketsIncluded,
-                      table?.maxCapacity
+                      table?.maxCapacity,
+                      table?.extraTickets,
+                      0
                     )
                   }
                 >

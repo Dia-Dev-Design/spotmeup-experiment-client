@@ -59,7 +59,7 @@ const AddTables = ({ block }) => {
       status: "Available",
       tprice: 0,
       tickets: 0,
-      isIncluded: 0,
+      isIncluded: true,
       row: exactPosition.row,
       col: exactPosition.col,
       number: 0,

@@ -86,7 +86,12 @@ const TableTools = () => {
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    const actualValue = type === "checkbox" ? checked : value;
+    const actualValue =
+      type === "checkbox"
+        ? checked
+        : type === "number"
+        ? parseFloat(value)
+        : value;
 
     const getSetter = (tableType) =>
       tableType.toLowerCase() === "circle" ? setTCircles : setTSquares;
@@ -135,15 +140,6 @@ const TableTools = () => {
     if (!["height", "width"].includes(name)) {
       updateTShape(tableId, updatedTable);
     }
-
-    // if (["circle", "square"].includes(currentTShape.tableType.toLowerCase())) {
-    //   let className = `${currentTShape.tableType.toLowerCase()}-shape`;
-    //   let elements = document.getElementsByClassName(className);
-
-    //   for (let element of elements) {
-    //     element.style.removeProperty("transform");
-    //   }
-    // }
   };
 
   // *! ----- Text Position (Align Items & Justify Content) ------
@@ -192,7 +188,7 @@ const TableTools = () => {
     }
   }, [currentTShape]);
 
-  // console.log("currentTShape:", currentTShape);
+  console.log("currentTShape:", currentTShape);
 
   // *! -------- DOM ELEMENTS -----------------------
   // *! -------- DOM ELEMENTS -----------------------
@@ -500,6 +496,7 @@ const TableTools = () => {
                     This Table Includes Tickets?
                   </label>
                   <input
+                    defaultChecked
                     type="checkbox"
                     name="isIncluded"
                     onChange={handleInputChange}
@@ -531,7 +528,7 @@ const TableTools = () => {
                         currentTShape?.isBlockMatched ? "tprice-false" : ""
                       }
                     >
-                      Price
+                      Table Price
                     </label>
                     <input
                       className={
@@ -552,6 +549,17 @@ const TableTools = () => {
                       value={currentTShape?.maxCapacity}
                       onChange={handleInputChange}
                       min={currentTShape?.ticketsIncluded || 0}
+                    />
+                  </div>
+
+                  <div className="block-ticket-fields quantity-container">
+                    <label htmlFor="extraTickets">Tickets Price</label>
+                    <input
+                      type="number"
+                      name="extraTickets"
+                      className="quantity"
+                      value={currentTShape?.extraTickets}
+                      onChange={handleInputChange}
                     />
                   </div>
 
