@@ -2,6 +2,6 @@
 
 // const TEST_HOST = "http://localhost:5173";
 // const API_URL = "https://spotmeup-s.adaptable.app"
-const API_URL = "https://spotmeup-test.netlify.app"
+const API_URL = "https://spotmeup-experiment-server.adaptable.app"
 
 export { API_URL };
