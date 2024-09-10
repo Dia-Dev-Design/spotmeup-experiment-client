@@ -629,7 +629,7 @@ const BuyTickets = () => {
               type="hidden"
               id="ApprovedUrl"
               name="ApprovedUrl"
-              value={`http://localhost:3000/transaction/approved/${param.eventIdParam}/${transactionId}`}
+              value={`${API_URL}/transaction/approved/${param.eventIdParam}/${transactionId}`}
             />
             {/* <input
               type="hidden"
