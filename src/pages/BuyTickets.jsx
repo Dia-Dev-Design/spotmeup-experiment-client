@@ -10,14 +10,13 @@ import {
   getTransactionCount,
 } from "../services/transaction.service";
 import CryptoJS from "crypto-js";
-
 import { API_URL } from "../services/api.service";
-
 import { findValidationInEvent } from "../services/validation.service";
+import { AuthContext } from "../context/auth.context";
 
 const BuyTickets = () => {
   const param = useParams();
-  // console.log("eventIdParam:", param.eventIdParam);
+  const { user } = useContext(AuthContext);
   const { ticketsCart, setTicketsCart } = useContext(TicketsContext);
   const [selected, setSelected] = useState({
     id: "",
@@ -28,6 +27,9 @@ const BuyTickets = () => {
     tixToGenerate: 1,
     blockId: "",
     tixIncluded: 0,
+    tableCapacity: 0,
+    extraTicketsPrice: 0,
+    extraTicketsQuantity: 0,
   });
   const [event, setEvent] = useState();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 760);
@@ -38,8 +40,9 @@ const BuyTickets = () => {
   const [transactionId, setTransactionId] = useState("");
   const [email, setEmail] = useState("");
   const [emailPrompt, setEmailPrompt] = useState("");
+  const [limitReachMessage, setLimitReachMessage] = useState("");
 
-  const [validationRecord, setValidationRecord] = useState(null)
+  const [validationRecord, setValidationRecord] = useState(null);
 
   const handleCheckoutTab = () => {
     setCheckoutTab((prev) => !prev);
@@ -66,7 +69,8 @@ const BuyTickets = () => {
     setCargoServicio(newCargoServicio);
   };
 
-
+  // console.log("Ticket Selected:", selected);
+  // console.log("user:", user);
 
   const getEvent = async () => {
     try {
@@ -91,19 +95,21 @@ const BuyTickets = () => {
   };
 
   const getValidationRecord = async () => {
+    const foundValidation = await findValidationInEvent(param.eventIdParam);
 
-    const foundValidation = await findValidationInEvent(param.eventIdParam)
+    console.log(
+      "This is the found validation record =======>",
+      foundValidation
+    );
 
-    console.log("This is the found validation record =======>", foundValidation)
-
-    setValidationRecord(foundValidation.validation)
-
-  }
+    setValidationRecord(foundValidation.validation);
+  };
 
   const handleAddToCart = () => {
-    console.log("Adding to cart Dustin:", selected);
     let newCartTickets = [...ticketsCart, selected];
+    console.log("New Cart Tickets:", newCartTickets);
     setTicketsCart(newCartTickets);
+
     setSelected({
       id: "",
       price: 0,
@@ -113,21 +119,102 @@ const BuyTickets = () => {
       tixToGenerate: 1,
       blockId: "",
       tixIncluded: 0,
+      extraTicketsQuantity: 0,
     });
   };
 
   const handleRemoveFromCart = (index) => {
-    const newTickets = ticketsCart.filter((ticket, i) => i !== index);
-    console.log("This is the tickets lenght", newTickets.length);
+    const newTickets = [...ticketsCart];
+    const ticket = newTickets[index];
+
+    if (ticket.hasTables === false) {
+      if (ticket.tixToGenerate > 1) {
+        const pricePerTicket = ticket.price / ticket.tixToGenerate;
+        ticket.tixToGenerate -= 1;
+        ticket.price = ticket.tixToGenerate * pricePerTicket;
+      } else {
+        newTickets.splice(index, 1);
+      }
+    } else if (ticket.hasTables) {
+      if (ticket.ticketsExtraQuantity > 0) {
+        ticket.tixToGenerate -= 1;
+        ticket.ticketsExtraQuantity -= 1;
+        ticket.price -= ticket.ticketsExtraPrice;
+      } else {
+        newTickets.splice(index, 1);
+      }
+    } else {
+      newTickets.splice(index, 1);
+    }
+
     setTicketsCart(newTickets);
   };
 
   const addQuantityToTicket = (ticketId) => {
-    let thisTicket = ticketsCart.find((ticket, i) => ticket.id === ticketId);
-    let updatedTickets = [...ticketsCart, thisTicket];
-    setTicketsCart(updatedTickets);
-    console.log("WE've found a Ticket!!!!", thisTicket);
+    let updatedTickets = ticketsCart.map((ticket) => {
+      if (!ticket || !ticket.id) return ticket;
+
+      if (ticket.id === ticketId) {
+        // Si el ticket tiene mesas (hasTables: true)
+        if (ticket.hasTables) {
+          const newQuantity = (ticket.ticketsExtraQuantity || 0) + 1;
+
+          // Verificar si se supera la capacidad de la mesa
+          if (newQuantity + ticket.tixIncluded > ticket.tableCapacity) {
+            setLimitReachMessage("Limit Reached !!!");
+
+            setTimeout(() => {
+              setLimitReachMessage(null);
+            }, 3000);
+
+            return ticket;
+          }
+
+          // Calcular el nuevo precio por tickets extra
+          const pricePerExtraTicket = ticket.ticketsExtraPrice || 0;
+          const newPrice = ticket.price + pricePerExtraTicket;
+
+          return {
+            ...ticket,
+            tixToGenerate: newQuantity + ticket.tixIncluded, // Actualiza la cantidad total generada
+            ticketsExtraQuantity: newQuantity, // Actualiza la cantidad de tickets extra
+            price: newPrice, // Actualiza el precio total
+          };
+
+          // Si el ticket no tiene mesas (hasTables: false)
+        } else {
+          const newQuantity = (ticket.tixToGenerate || 0) + 1;
+
+          // Verificar si se supera el número máximo de tickets
+          if (newQuantity > ticket.maxTickets) {
+            setLimitReachMessage("Limit Reached !!!");
+
+            setTimeout(() => {
+              setLimitReachMessage(null);
+            }, 3000);
+
+            return ticket;
+          }
+
+          // Calcular el nuevo precio por ticket
+          const pricePerTicket = ticket.price / ticket.tixToGenerate;
+          const newPrice = newQuantity * pricePerTicket;
+
+          return {
+            ...ticket,
+            tixToGenerate: newQuantity, // Actualiza la cantidad de tickets generados
+            price: newPrice, // Actualiza el precio total
+          };
+        }
+      }
+      // Devuelve el ticket sin modificar si no coincide el id
+      return ticket;
+    });
+
+    setTicketsCart(updatedTickets); // Actualizar el estado con los tickets actualizados
   };
+
+  // console.log("Tickets Cart:", ticketsCart);
 
   const calculateAuthHash = () => {
     const secretKey =
@@ -157,46 +244,40 @@ const BuyTickets = () => {
     return hash.toString(CryptoJS.enc.Hex);
   };
 
-
   const handleTransaction = async () => {
     try {
-      if (!email) {
-        setEmailPrompt("Email must be filled");
-        setTimeout(() => {
-          setEmailPrompt("");
-        }, 3000);
-      } else {
-        const transactionBody = {
-          transactionNumber: transactionLength,
-          paymentMethod: "Prueba Azul",
-          subTotal: total,
-          discount: 0,
-          tax: cargoServicio,
-          total: total + cargoServicio,
-          description: `${ticketsCart.length} ${ticketsCart.length > 1 ? 'tickets' : 'ticket'} for ${event.name}.`,
-          status: "pending",
-          items: ticketsCart,
-          email: email,
-        };
+      // if (!email) {
+      //   setEmailPrompt("Email must be filled");
+      //   setTimeout(() => {
+      //     setEmailPrompt("");
+      //   }, 3000);
+      // } else {
+      const transactionBody = {
+        transactionNumber: transactionLength,
+        paymentMethod: "Prueba Azul",
+        subTotal: total,
+        discount: 0,
+        tax: cargoServicio,
+        total: total + cargoServicio,
+        description: `${ticketsCart.length} ${
+          ticketsCart.length > 1 ? "tickets" : "ticket"
+        } for ${event.name}.`,
+        status: "pending",
+        items: ticketsCart,
+        buyer: user?._id,
+      };
 
-        const response = await createTransaction(transactionBody);
-        console.log("This is the response on 178 ========>", response)
-        if (response.success) {
-          setTransactionId(response.transaction._id);
-          console.log("CreateTransaction - Success:", response);
-          setCheckoutTab(true);
-        }
+      const response = await createTransaction(transactionBody);
+      console.log("This is the response on 178 ========>", response);
+      if (response.success) {
+        setTransactionId(response.transaction._id);
+        console.log("CreateTransaction - Success:", response);
+        setCheckoutTab(true);
       }
+      // }
     } catch (error) {
       console.error("CreateTransaction - Success:", error.response);
     }
-  };
-
-  
-
-  const handleInputChange = (e) => {
-    const { value } = e.target;
-    setEmail((prevEmail) => value);
   };
 
   useEffect(() => {
@@ -221,8 +302,14 @@ const BuyTickets = () => {
   useEffect(() => {
     getEvent();
     getTransactionLength();
-    getValidationRecord()
+    getValidationRecord();
   }, []);
+
+  // const blockAvailability = validationRecord.areas;
+
+  // console.log("Block Availability:", blockAvailability);
+
+  // console.log("Tickets Cart:", ticketsCart && ticketsCart);
 
   return (
     <div>
@@ -239,7 +326,7 @@ const BuyTickets = () => {
             addToCart={true}
             selected={selected}
             setSelected={setSelected}
-            sold={validationRecord}
+            validationRecords={validationRecord}
           />
           <div className="cart-container">
             <svg
@@ -277,10 +364,13 @@ const BuyTickets = () => {
           </div>
         </div>
 
+        {limitReachMessage && (
+          <h1 className="limit-reach-message">{limitReachMessage}</h1>
+        )}
         {ticketsCart.length > 0 && (
           <div>
             <div className="email-container-buytickets">
-              {emailPrompt && <h2 className="email-prompt">{emailPrompt}</h2>}
+              {/* {emailPrompt && <h2 className="email-prompt">{emailPrompt}</h2>}
               <label htmlFor="email" className="email-title-tickets">
                 ¿Donde enviamos los tickets?
               </label>
@@ -290,18 +380,19 @@ const BuyTickets = () => {
                 name="email"
                 onChange={handleInputChange}
                 className="email-transaction-input"
-              />
+              /> */}
             </div>
             <div className="quantity-included-container-parent">
               <div className="quantity-included-container">
                 <h1>Description</h1>
                 <h1>Included</h1>
-                <h1>Qty</h1>
+                <h1>Tix</h1>
                 <h1 className="form-header-price">Price</h1>
               </div>
             </div>
           </div>
         )}
+
         {ticketsCart.length > 0 && (
           <div>
             <div className="buy-tickets-form">
@@ -311,14 +402,15 @@ const BuyTickets = () => {
                     key={index}
                     className="tickets-selected-container ticket-selected-bg"
                   >
-                    <h1 className="ticket-selected-form">{ticket.name}</h1>
-                    <h1>{ticket.tixIncluded}</h1>
-                    {ticket.name === "General Area" ? (
+                    <h1 className="ticket-selected-form">{ticket?.name}</h1>
+                    <h1>{ticket?.tixIncluded}</h1>
+                    {ticket?.hasTables ? (
                       <h1>
-                        {ticketsCart.reduce((a, b) => a + b.tixToGenerate, 0)}
+                        {ticket?.tixIncluded + ticket?.ticketsExtraQuantity}/
+                        {ticket?.tableCapacity}
                       </h1>
                     ) : (
-                      <h1>{ticket.tixToGenerate || ticket.maxTickets}</h1>
+                      <h1>{ticket?.tixToGenerate}</h1>
                     )}
                     <h1 className="cart-btns">
                       <button
@@ -327,22 +419,51 @@ const BuyTickets = () => {
                       >
                         -
                       </button>
-                      ${formatNumberWithCommas(ticket.price)}
-                      {!ticket.hasTables && (
+                      ${formatNumberWithCommas(ticket?.price)}
+                      {!ticket?.hasTables && (
                         <button
-                          className="add-from-cart"
-                          onClick={() => addQuantityToTicket(ticket.id)}
+                          className={
+                            ticket?.tixToGenerate > ticket?.maxTickets
+                              ? "add-from-cart none-events"
+                              : "add-from-cart"
+                          }
+                          onClick={() => addQuantityToTicket(ticket?.id)}
                         >
                           +
                         </button>
                       )}
-                      {ticket.hasTables && (
+                      {ticket?.hasTables && (
                         <button className="add-from-cart-invisible">+</button>
                       )}
                     </h1>
                   </div>
+                  {ticket?.hasTables && (
+                    <div className="extra-tickets-row">
+                      <h1>
+                        Add extra Tickets to this table for{" "}
+                        <span className="ticket-extra-price">
+                          ${ticket?.ticketsExtraPrice}
+                        </span>
+                      </h1>
+                      <button
+                        className="ticket-extra-add"
+                        onClick={() => addQuantityToTicket(ticket?.id)}
+                      >
+                        Add
+                      </button>
+                      {ticket.ticketsExtraQuantity > 0 && (
+                        <button
+                          className="ticket-remove-add"
+                          onClick={() => handleRemoveFromCart(index)}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
+
               <div className="tickets-selected-container ticket-selected-cargo">
                 <h1 className="bold">Cargo x Servicio:</h1>
                 <h1></h1>

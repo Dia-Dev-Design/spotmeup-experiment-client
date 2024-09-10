@@ -84,14 +84,16 @@ const MainEvents = ({ events }) => {
               <div
                 style={{
                   backgroundImage: `url(${
-                    event.images && event.images.length > 0
+                    event.images &&
+                    event.images.length > 0 &&
+                    event.images[0] !== ""
                       ? event.images[0]
-                      : "/no-image.jpg" // URL de la imagen de respaldo
+                      : "/no-image.jpg"
                   })`,
                   backgroundSize: "100%",
                   backgroundRepeat: "no-repeat",
                   width: "100%",
-                //   height: "270px",
+                  //   height: "270px",
                   borderRadius: "10px",
                 }}
                 className="event-image"

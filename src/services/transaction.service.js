@@ -47,7 +47,7 @@ export const getTransactionCount = async () => {
   try {
 
     const response = await axios.get(`${API_URL}/transaction/get-count`);
-    console.log("Looking at data")
+    // console.log("Looking at data")
     return response.data;
 
   } catch (err) {

@@ -36,7 +36,6 @@ const UpcomingEvents = ({ events }) => {
     return eventDate.setHours(0, 0, 0, 0) >= today.setHours(0, 0, 0, 0);
   });
 
-
   return (
     <div className="upcoming-events-container">
       {filteredEvents && filteredEvents?.length > 0 ? (
@@ -47,7 +46,9 @@ const UpcomingEvents = ({ events }) => {
               <div
                 style={{
                   backgroundImage: `url(${
-                    event.images && event.images.length > 0
+                    event.images &&
+                    event.images.length > 0 &&
+                    event.images[0] !== ""
                       ? event.images[0]
                       : "/no-image.jpg" // URL de la imagen de respaldo
                   })`,

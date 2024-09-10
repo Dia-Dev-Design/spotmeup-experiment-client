@@ -11,7 +11,7 @@ import { AuthContext } from "../context/auth.context";
 const Home = () => {
   const [events, setEvents] = useState(null);
   const { isLoggedIn } = useContext(AuthContext);
-  console.log("🚀 ~ Home ~ isLoggedIn:", isLoggedIn);
+  // console.log("🚀 ~ Home ~ isLoggedIn:", isLoggedIn);
   const getAllEvents = async () => {
     try {
       const response = await findAllEvents();

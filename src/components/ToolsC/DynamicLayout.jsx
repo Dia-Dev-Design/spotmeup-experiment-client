@@ -11,10 +11,11 @@ const DynamicLayout = ({
   addToCart,
   selected,
   setSelected,
-  sold
+  validationRecords,
 }) => {
   const [layoutObject, setlayoutObject] = useState({});
   const { ticketsCart } = useContext(TicketsContext);
+
   const blockRef = useRef(null);
   const tableRef = useRef(null);
 
@@ -46,6 +47,12 @@ const DynamicLayout = ({
     }
   };
 
+  const soldTables = validationRecords?.tables
+    ?.filter((table) => table.sold === true)
+    .map((table) => table.tableId);
+
+  // console.log("Tables Sold:", soldTables);
+
   const handleSelect = (
     tixId,
     tixPrice,
@@ -54,7 +61,10 @@ const DynamicLayout = ({
     tixName,
     tixAmount,
     tixBlockId,
-    includedTickets
+    includedTickets,
+    capacityTable,
+    extraTicketsPrice,
+    extraTicketsQuantity
   ) => {
     setSelected({
       id: tixId,
@@ -65,7 +75,20 @@ const DynamicLayout = ({
       tixToGenerate: tixAmount,
       blockId: tixBlockId,
       tixIncluded: includedTickets,
+      tableCapacity: capacityTable,
+      ticketsExtraPrice: extraTicketsPrice,
+      ticketsExtraQuantity: extraTicketsQuantity,
     });
+  };
+
+  const findTicketsAvailable = (blockId) => {
+    const blockAvailability = validationRecords.areas.find(
+      (area) => area.blockId === blockId
+    );
+
+    console.log("Block Availability:", blockAvailability);
+
+    return blockAvailability ? blockAvailability.quantity : 0;
   };
 
   useEffect(() => {
@@ -130,33 +153,40 @@ const DynamicLayout = ({
               width: `${block?.width * scale}px`,
               height: `${block?.height * scale}px`,
               backgroundColor: `${block?.backgroundColor}`,
+              display: "flex",
               left: `${block?.x * scale}px`,
               top: `${block?.y * scale}px`,
               justifyContent: `${block?.justifyContent}`,
               alignItems: `${block?.alignItems}`,
               color: `${block?.color}`,
               border: `${block?.borderSize}px solid ${block?.borderColor}`,
-              display: "flex",
               cursor: "pointer",
               opacity: selected?.id === `${block._id}` ? "0.5" : "1",
             }}
             onClick={
               !block.tables.length
-                ? () =>
+                ? () => {
+                    const availableTickets = findTicketsAvailable(block._id);
+
                     handleSelect(
                       block._id,
                       block.bprice,
                       false,
-                      block.btickets,
+                      availableTickets,
                       block.name,
                       1,
-                      block._id
-                    )
+                      block._id,
+                      0,
+                      0,
+                      0,
+                      0
+                    );
+                  }
                 : undefined
             }
             key={index}
             className={`dasboard-table-hover click-inside ${
-              ticketsCart.some((ticket) => ticket.id === block._id) 
+              ticketsCart.some((ticket) => ticket.id === block._id)
                 ? "isInCart"
                 : ""
             }`}
@@ -204,8 +234,8 @@ const DynamicLayout = ({
                     opacity: selected?.id === `${table._id}` ? "0.7" : "1",
                   }}
                   className={`dashboard-table-number-parent click-inside ${
-                    ticketsCart.some((ticket) => ticket.id === table._id) 
-                    // || sold.tables.find((table) => table.tableId === table._id).sold
+                    soldTables?.includes(table._id) ||
+                    ticketsCart.some((ticket) => ticket.id === table._id)
                       ? "isInCart"
                       : ""
                   }`}
@@ -216,10 +246,13 @@ const DynamicLayout = ({
                       table.tprice,
                       true,
                       1,
-                      `Block-${block.name} Table-${table.number}`,
+                      `Table-${table.number}`,
                       table?.ticketsIncluded,
                       table.block,
-                      table?.ticketsIncluded
+                      table?.ticketsIncluded,
+                      table?.maxCapacity,
+                      table?.extraTickets,
+                      0
                     )
                   }
                 >
@@ -230,6 +263,7 @@ const DynamicLayout = ({
                   {tooltip && (
                     <div
                       className={
+                        soldTables?.includes(table._id) ||
                         selected?.id === table?._id
                           ? "dashboard-tooltip-selected"
                           : "dashboard-tooltip"
@@ -241,12 +275,14 @@ const DynamicLayout = ({
                         }%`,
                       }}
                     >
-                      <h2 className="dashboard-tooltip-size">
-                        <span className="dollar-span">$</span>
-                        {formatPrices
-                          ? formatNumber(table.tprice)
-                          : table.tprice}
-                      </h2>
+                      {!soldTables?.includes(table._id) && (
+                        <h2 className="dashboard-tooltip-size">
+                          <span className="dollar-span">$</span>
+                          {formatPrices
+                            ? formatNumber(table.tprice)
+                            : table.tprice}
+                        </h2>
+                      )}
                     </div>
                   )}
                 </div>

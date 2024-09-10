@@ -111,7 +111,7 @@ const DisplayEvents = () => {
                 {/* <h1 className="event-name">{event.name}</h1> */}
                 {/* <hr className="hr-event"/> */}
                 {/* <h2 className="event-address">{event.address.street}</h2> */}
-                <h2 className="event-address">{event.name}</h2>
+                <h2 className="display-events-text-carousel">{event.name}</h2>
               </div>
             </SwiperSlide>
           </div>

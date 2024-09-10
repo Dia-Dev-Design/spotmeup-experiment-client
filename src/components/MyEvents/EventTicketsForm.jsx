@@ -40,7 +40,7 @@ const EventTicketsForm = ({ setEvent, selectedVenue, event, hasVenue }) => {
         }, 1000);
       }
     } catch (error) {
-      console.error("The Actual Error:", error);
+      console.error("The Actual Error:", error.response);
       setMessage(error.message);
     }
   };
