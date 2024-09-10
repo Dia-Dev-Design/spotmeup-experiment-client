@@ -70,6 +70,7 @@ const BuyTickets = () => {
   };
 
   // console.log("Ticket Selected:", selected);
+  // console.log("user:", user);
 
   const getEvent = async () => {
     try {
@@ -213,7 +214,7 @@ const BuyTickets = () => {
     setTicketsCart(updatedTickets); // Actualizar el estado con los tickets actualizados
   };
 
-  console.log("Tickets Cart:", ticketsCart);
+  // console.log("Tickets Cart:", ticketsCart);
 
   const calculateAuthHash = () => {
     const secretKey =
