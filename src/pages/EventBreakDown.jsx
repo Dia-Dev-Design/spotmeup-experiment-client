@@ -9,19 +9,21 @@ import ESales from "../components/EBreakDown/ESales";
 import EPromoters from "../components/EBreakDown/EPromoters";
 import EventInfo from "../components/EBreakDown/EventInfo";
 import EBouncers from "../components/EBreakDown/EBouncers";
+import { findValidationInEvent } from "../services/validation.service";
 
 const EventBreakDown = () => {
   const param = useParams();
   const { linkName } = useContext(MyEventsContext);
+  const [validationRecord, setValidationRecord] = useState(null);
 
-//   console.log("eventIdParam:", param.eventIdParam);
+  //   console.log("eventIdParam:", param.eventIdParam);
 
   const [event, setEvent] = useState({});
 
   const getEvent = async () => {
     try {
       const response = await findEvent(param.eventIdParam);
-    //   console.log("getEvent - Response:", response);
+      //   console.log("getEvent - Response:", response);
       if (response.success) {
         setEvent(response.event);
       }
@@ -30,11 +32,23 @@ const EventBreakDown = () => {
     }
   };
 
+  const getValidationRecord = async () => {
+    const foundValidation = await findValidationInEvent(param.eventIdParam);
+
+    console.log(
+      "This is the found validation record =======>",
+      foundValidation
+    );
+
+    setValidationRecord(foundValidation.validation);
+  };
+
   useEffect(() => {
     getEvent();
+    getValidationRecord();
   }, []);
 
-//   console.log("Event:", event);
+  //   console.log("Event:", event);
 
   return (
     <div>
@@ -44,7 +58,9 @@ const EventBreakDown = () => {
         <div>
           {event && <h1 className="event-dashboard-title">{event.name}</h1>}
 
-          {linkName === "dashboard" && <EDashboard event={event} />}
+          {linkName === "dashboard" && (
+            <EDashboard event={event} validationRecord={validationRecord} />
+          )}
           {linkName === "sales" && <ESales event={event} />}
           {linkName === "event-info" && <EventInfo event={event} />}
           {linkName === "promotors" && <EPromoters event={event} />}

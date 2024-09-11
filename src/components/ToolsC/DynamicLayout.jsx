@@ -12,6 +12,7 @@ const DynamicLayout = ({
   selected,
   setSelected,
   validationRecords,
+  showRemaining,
 }) => {
   const [layoutObject, setlayoutObject] = useState({});
   const { ticketsCart } = useContext(TicketsContext);
@@ -86,7 +87,7 @@ const DynamicLayout = ({
       (area) => area.blockId === blockId
     );
 
-    console.log("Block Availability:", blockAvailability);
+    // console.log("Block Availability:", blockAvailability);
 
     return blockAvailability ? blockAvailability.quantity : 0;
   };
@@ -215,7 +216,26 @@ const DynamicLayout = ({
               )}
               {!block.tables.length ? <>{block?.name}</> : ""}
             </h1>
-            <div className="dashboard-table-grid">
+            {console.log("block:", block)}
+            {showRemaining && !block.tables.length && (
+              <div
+                className="show-remaining-block"
+                style={{
+                  backgroundColor: `${block.backgroundColor}`,
+                  color: `${block.color}`,
+                }}
+              >
+                <h1
+                  style={{
+                    color: `${block.color}`,
+                  }}
+                >
+                  {block.maxCapacity - findTicketsAvailable(block._id)}/
+                  {block.maxCapacity}
+                </h1>
+              </div>
+            )}
+            <div className={block.tables.length ? "dashboard-table-grid" : ""}>
               {block?.tables?.map((table, index) => (
                 <div
                   key={index}
