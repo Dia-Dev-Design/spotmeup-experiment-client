@@ -26,6 +26,7 @@ const NavBar = () => {
     console.log("Token Removed");
     localStorage.removeItem("authToken");
     authenticateUser(); // Llamar a la función de autenticación para actualizar el estado
+    navigate("/");
   };
 
   const handleLogout = () => {
@@ -62,8 +63,6 @@ const NavBar = () => {
         </div>
 
         <div className="promoters-link promoters-icon-container">
-        
-
           <Link to={isLoggedIn ? "/myevents" : "/signup"} className="navlink">
             Promoters
           </Link>
@@ -90,17 +89,23 @@ const NavBar = () => {
           </Link>
         </div> */}
 
-        <div className="nav-img-container log-link">
-          <Link to={isLoggedIn ? "/" : "/signup"} className="navlink-signup">
-            {/* <div className="nav-user-img"></div> */}
-            <h1
-              className="login-signup-navtext"
-              // onClick={isLoggedIn ? removeToken() : ""}
-            >
-              {isLoggedIn ? "Log Out" : "Log In or Sign Up"}
-            </h1>
-          </Link>
-        </div>
+        {!isLoggedIn ? (
+          <div className="nav-img-container log-link">
+            <Link to="/login" className="navlink-signup">
+              {/* <div className="nav-user-img"></div> */}
+              <h1
+                className="login-signup-navtext"
+                // onClick={isLoggedIn ? removeToken() : ""}
+              >
+                "Log In or Sign Up"
+              </h1>
+            </Link>
+          </div>
+        ) : (
+          <button className="login-signup-navtext" onClick={handleLogout}>
+            Log Out
+          </button>
+        )}
       </div>
     </nav>
   );

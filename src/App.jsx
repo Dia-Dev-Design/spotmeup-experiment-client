@@ -27,7 +27,7 @@ function App() {
   };
 
   const NotLoggedIn = () => {
-    return !getToken() ? <Navigate to="/must-login" /> : <Outlet />;
+    return !getToken() ? <Outlet /> : <Navigate to="/" />;
   };
 
   const RequireAuth = () => {
@@ -41,15 +41,13 @@ function App() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-    
       <Routes>
-
         <Route element={<NotLoggedIn />}>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/about" element={<About />} />
-          <Route path="/" element={<Home />} />
         </Route>
+        <Route path="/" element={<Home />} />
 
         <Route path="/must-login" element={<MustLogin />} />
 
@@ -86,10 +84,7 @@ function App() {
             path="/approved/:eventIdParam/:transactionIdParam"
             element={<Approved />}
           />
-          <Route
-            path="/view-tickets"
-            element={<TicketsPage />}
-          />
+          <Route path="/view-tickets" element={<TicketsPage />} />
         </Route>
 
         <Route path="/scannig-tool/:eventIdParam" element={<ScanningTool />} />

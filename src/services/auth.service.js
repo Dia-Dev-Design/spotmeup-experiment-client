@@ -1,17 +1,28 @@
 import { API_URL } from "./api.service";
 import axios from "axios";
 
+import { useContext } from "react";
+
+import { AuthContext } from "../context/auth.context";
+
+import { useNavigate } from "react-router-dom";
+
 export const storeToken = (token) => {
   localStorage.setItem("authToken", token);
   console.log("Line 6 - Token:", token);
 };
 
 export const removeToken = () => {
-  localStorage.clear()
-}
+  localStorage.clear();
+};
 
 export const authenticateUser = () => {
   const storedToken = localStorage.getItem("authToken");
+
+  const { user, isLoggedIn, isLoading, setUser, setIsLoggeIn, setIsLoading } =
+    useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   if (storedToken) {
     return axios
@@ -19,15 +30,25 @@ export const authenticateUser = () => {
         headers: { Authorization: `Bearer ${storedToken}` },
       })
       .then((response) => {
-        return { user: response.data.user, isLoggedIn: true, isLoading: false };
+        // return { user: response.data.user, isLoggedIn: true, isLoading: false };
+        setUser(response.data.user);
+        setIsLoading(false);
+        setIsLoggeIn(true);
       })
       .catch((error) => {
         console.log("Verify - Error:", error.response);
-        removeToken()
-        return { user: null, isLoggedIn: false, isLoading: false };
+        removeToken();
+        navigate('/');
+        setUser(null);
+        setIsLoading(false);
+        setIsLoggeIn(false);
+        // return { user: null, isLoggedIn: false, isLoading: false };
       });
   } else {
-    return Promise.resolve({ user: null, isLoggedIn: false, isLoading: false });
+    // return Promise.resolve({ user: null, isLoggedIn: false, isLoading: false });
+    setUser(null);
+    setIsLoading(false);
+    setIsLoggeIn(false);
   }
 };
 
@@ -60,7 +81,7 @@ export const signup = async (
       console.log("Line 72 - setUser:", response.data.user);
     }
 
-    console.log('Line 58 - response.data:', response.data)
+    console.log("Line 58 - response.data:", response.data);
     return response;
   } catch (error) {
     console.log("Line 61 - Error:", error);

@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import DynamicLayout from "../ToolsC/DynamicLayout";
+import { findValidationInEvent } from "../../services/validation.service";
 
-const EDashboard = ({ event }) => {
-//   console.log("Event From EDashboard:", event);
+const EDashboard = ({ event, validationRecord }) => {
+  //   console.log("Event From EDashboard:", event);
 
   return (
     <div className="e-dashboard-grid-container">
-      <DynamicLayout layoutId={event?.layout?._id} scale={0.6} edit={true} />
+      <DynamicLayout
+        layoutId={event?.layout?._id}
+        scale={0.6}
+        edit={false}
+        validationRecords={validationRecord}
+        showRemaining={true}
+      />
 
       <div className="e-dashboard-item">
         <h1 className="e-edit-item">Edit</h1>
