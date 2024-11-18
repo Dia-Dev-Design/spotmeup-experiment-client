@@ -216,7 +216,7 @@ const DynamicLayout = ({
               )}
               {!block.tables.length ? <>{block?.name}</> : ""}
             </h1>
-            {console.log("block:", block)}
+            {/* {console.log("block:", block)} */}
             {showRemaining && !block.tables.length && (
               <div
                 className="show-remaining-block"

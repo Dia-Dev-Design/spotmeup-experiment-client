@@ -10,6 +10,7 @@ import EPromoters from "../components/EBreakDown/EPromoters";
 import EventInfo from "../components/EBreakDown/EventInfo";
 import EBouncers from "../components/EBreakDown/EBouncers";
 import { findValidationInEvent } from "../services/validation.service";
+import { findTicketsTablesNumber } from "../services/ticket.service";
 
 const EventBreakDown = () => {
   const param = useParams();
@@ -43,9 +44,19 @@ const EventBreakDown = () => {
     setValidationRecord(foundValidation.validation);
   };
 
+  const getAllTicketsInfo = async () => {
+    try {
+      const response = await findTicketsTablesNumber(param.eventIdParam);
+      console.log("Victor Route Response:", response);
+    } catch (error) {
+      console.log("Victor Route Error:", error.response);
+    }
+  };
+
   useEffect(() => {
     getEvent();
     getValidationRecord();
+    getAllTicketsInfo();
   }, []);
 
   //   console.log("Event:", event);

@@ -57,3 +57,15 @@ export const findBoughtTicketsByUserEvent = async (userId) => {
     throw error;
   }
 };
+
+export const findTicketsTablesNumber = async (eventId) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/ticket/event/${eventId}/sales-summary`
+    );
+    // console.log("getAllTickets - Service:", response);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
