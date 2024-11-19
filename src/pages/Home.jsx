@@ -32,7 +32,7 @@ const Home = () => {
     <div className="homepage-container">
       <h1 className="become-promoter">Become a promoter</h1>
       <NavBar />
-      <div className="home-search-bar-container">
+      {/* <div className="home-search-bar-container">
         <input
           type="search"
           className="home-search-bar"
@@ -41,10 +41,10 @@ const Home = () => {
         <button className="button search-button">
           <span className="span">🔎</span>
         </button>
-      </div>
-      <h1 className="home-carousel-title">Feature Events</h1>
+      </div> */}
+      {/* <h1 className="home-carousel-title">Feature Events</h1> */}
       <MainEvents events={events} />
-      <h1 className="home-carousel-title">Upcoming Events</h1>
+      {/* <h1 className="home-carousel-title">Upcoming Events</h1> */}
       <UpcomingEvents events={events} />
       {/* <h1 className="home-carousel-title">This Week</h1>
       <ThisWeek events={events} /> */}
