@@ -88,18 +88,20 @@ const MainEvents = ({ events }) => {
       pagination={{
         clickable: true,
         renderCustom: (swiper, current, total) => {
-          return `
-            <div class="custom-pagination">
-              <div></div>
-              <span class="current">${current}</span> /
-              <span class="total">${total}</span>
-              <div>Next</div>
-            </div>
-          `;
+          let bullets = "";
+          for (let i = 1; i <= total; i++) {
+            bullets += `
+              <span class="${i === current ? "custom-bullet active" : "custom-bullet"}">
+                ${i}
+              </span>
+            `;
+          }
+          return `<div class="custom-pagination">${bullets}</div>`;
         },
       }}
+      // pagination={true}
       loop={true}
-      modules={[Navigation, Pagination, Scrollbar, A11y, EffectCoverflow]}
+      modules={[ A11y, EffectCoverflow, Pagination]}
       onSlideChange={handleSlideChange}
       onSwiper={(swiperInstance) => {
         swiperRef.current = swiperInstance;

@@ -100,9 +100,9 @@ const NavBar = () => {
             </Link>
           </div>
         ) : (
-          <button className="login-signup-navtext" onClick={handleLogout}>
+          <h1 className="login-signup-navtext" onClick={handleLogout}>
             Log Out
-          </button>
+          </h1>
         )}
         <div className="promoters-link promoters-icon-container">
           <Link
