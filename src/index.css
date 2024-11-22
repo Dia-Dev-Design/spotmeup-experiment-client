@@ -3792,7 +3792,7 @@ input[type="color"]::-webkit-color-swatch {
   padding-bottom: 1.5rem;
 }
 
---swiper-pagination-color: #b19fff;
+/* --swiper-pagination-color: #b19fff; */
 
 .swiper-button-disabled {
   display: none !important;
