@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
+import "./../dist/output.css";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/auth.context.jsx";
@@ -16,28 +17,28 @@ import { TicketsProvider } from "./context/tickets.context.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <GoogleMapsProvider>
-          <MyEventsProvider>
-            <TicketsProvider>
-              <VenuesProvider>
-                <LayoutProvider>
-                  <BreakDownProvider>
-                    <ShapeProvider>
-                      <BlockProvider>
-                        <TableProvider>
-                          <App />
-                        </TableProvider>
-                      </BlockProvider>
-                    </ShapeProvider>
-                  </BreakDownProvider>
-                </LayoutProvider>
-              </VenuesProvider>
-            </TicketsProvider>
-          </MyEventsProvider>
-        </GoogleMapsProvider>
-      </AuthProvider>
-    </BrowserRouter>
+  <BrowserRouter>
+    <AuthProvider>
+      <GoogleMapsProvider>
+        <MyEventsProvider>
+          <TicketsProvider>
+            <VenuesProvider>
+              <LayoutProvider>
+                <BreakDownProvider>
+                  <ShapeProvider>
+                    <BlockProvider>
+                      <TableProvider>
+                        <App />
+                      </TableProvider>
+                    </BlockProvider>
+                  </ShapeProvider>
+                </BreakDownProvider>
+              </LayoutProvider>
+            </VenuesProvider>
+          </TicketsProvider>
+        </MyEventsProvider>
+      </GoogleMapsProvider>
+    </AuthProvider>
+  </BrowserRouter>
   // </React.StrictMode>
 );

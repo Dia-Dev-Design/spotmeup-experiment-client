@@ -1,11 +1,33 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { findAllEvents } from "../../services/events.service";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
+import {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  EffectCoverflow,
+} from "swiper/modules";
 import { useNavigate } from "react-router-dom";
 import "swiper/css/bundle";
 
 const MainEvents = ({ events }) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const swiperRef = useRef(null);
+
+  const handleSlideChange = () => {
+    const currentActiveIndex = swiperRef?.current?.realIndex;
+
+    setActiveIndex(currentActiveIndex);
+  };
+
+  const handleNextSlide = () => {
+    swiperRef.current?.slideNext();
+  };
+
+  const handlePrevSlide = () => {
+    swiperRef.current?.slidePrev();
+  };
   const navigate = useNavigate();
   const formatDate = (dateString) => {
     const eventDate = new Date(dateString);
@@ -43,72 +65,81 @@ const MainEvents = ({ events }) => {
     return `${hours12}:${minutes} ${period}`;
   };
 
-  const handleChangePage = (eventId) => {
-    navigate(`/event-details/${eventId}`);
+  const handleChangePage = (eventId, index) => {
+    if (activeIndex === index) {
+      navigate(`/event-details/${eventId}`);
+    }
   };
+
   return (
     <Swiper
-      modules={[Navigation, Pagination, Scrollbar, A11y]}
-      spaceBetween={50}
-      slidesPerView={5}
-      breakpoints={{
-        320: {
-          slidesPerView: 1,
-          navigation: false,
-        },
-        640: {
-          slidesPerView: 3,
-          navigation: true,
-        },
-        768: {
-          slidesPerView: 4,
-          navigation: true,
-        },
+      effect={"coverflow"}
+      grabCursor={true}
+      slidesPerView={"auto"}
+      centeredSlides={true}
+      coverflowEffect={{
+        rotate: 50,
+        stretch: 0,
+        depth: 150,
+        modifier: 1,
+        slideShadows: true,
       }}
-      className="thisweek-container"
+      className="mySwiper"
       pagination={{
         clickable: true,
-        // dynamicBullets: false,
+        renderCustom: (swiper, current, total) => {
+          let bullets = "";
+          for (let i = 1; i <= total; i++) {
+            bullets += `
+              <span class="${i === current ? "custom-bullet active" : "custom-bullet"}">
+                ${i}
+              </span>
+            `;
+          }
+          return `<div class="custom-pagination">${bullets}</div>`;
+        },
+      }}
+      // pagination={true}
+      loop={true}
+      modules={[ A11y, EffectCoverflow, Pagination]}
+      onSlideChange={handleSlideChange}
+      onSwiper={(swiperInstance) => {
+        swiperRef.current = swiperInstance;
       }}
     >
       {events &&
         events
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .slice(0, 4)
-          .map((event) => (
+          .slice(0, 10)
+          .map((event, index) => (
             <SwiperSlide
               key={event._id}
-              className="featured-events-container"
-              onClick={() => handleChangePage(event._id)}
+              onClick={() => handleChangePage(event._id, index)}
+              style={{
+                paddingBottom: "0rem",
+                borderRadius: "20px",
+              }}
             >
-              <div
+              <img
+                src={event?.images[0] ? event?.images[0] : "/no-image.jpg"}
+                alt="event-logo"
                 style={{
-                  backgroundImage: `url(${
-                    event.images &&
-                    event.images.length > 0 &&
-                    event.images[0] !== ""
-                      ? event.images[0]
-                      : "/no-image.jpg"
-                  })`,
-                  backgroundSize: "100%",
-                  backgroundRepeat: "no-repeat",
                   width: "100%",
-                  //   height: "270px",
-                  borderRadius: "10px",
+                  height: "300px",
+                  objectFit: "cover",
+                  borderRadius: "20px",
                 }}
-                className="event-image"
-              ></div>
-              <h1 className="featured-event-fonts featured-event-name">
-                {event?.name}
-              </h1>
-              <h1 className="featured-event-fonts">
-                {event?.address?.state}, {event?.address?.city}
-              </h1>
+              />
 
-              <h1 className="featured-event-fonts">
-                {formatDate(event?.date)} - {formatTime(event?.time)}
-              </h1>
-              <h1 className="featured-event-fonts"></h1>
+              {console.log(`Active Index ${activeIndex} - Index ${index}`)}
+
+              {/* {index === activeIndex && (
+                <>
+                  <h1 style={{ color: "red", textAlign: "center" }}>
+                    Este está activo
+                  </h1>
+                </>
+              )} */}
             </SwiperSlide>
           ))}
     </Swiper>

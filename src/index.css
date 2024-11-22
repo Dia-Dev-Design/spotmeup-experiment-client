@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @font-face {
   font-family: "VCR_OSD_MONO";
   src: url("./assets/fonts/VCR_OSD_MONO_1.001.ttf");
@@ -14,15 +18,16 @@
   --red: rgb(192, 87, 70);
   --yellow: #e8ad2f;
   --black: #231f20;
-  --primary--font: "VCR_OSD_MONO";
+  --primary--font: "Gill Sans";
   --secondary--font: "Kayak_Sans_Regular";
   --cursor: "./assets/icons/cursor.png";
 }
 
 body {
-  background-color: var(--white);
+  background-color: black;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 /* Tools */
@@ -961,6 +966,10 @@ button:hover {
   color: black;
 }
 
+.normalize-text {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
 .profile-invalid-prompt {
   margin-bottom: 1rem;
   color: var(--red);
@@ -975,13 +984,17 @@ button:hover {
 
 .navbar-container {
   width: 100%;
-  background-color: var(--white);
+  background-color: black;
+  display: flex;
+  justify-content: space-evenly;
+  padding: 1rem;
+  align-items: center;
 }
 
 .navlink {
   text-decoration: none;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-  color: var(--black);
+  color: var(--white);
   font-size: 20px;
   /* text-shadow: 1px 1px 0px black; */
 }
@@ -992,12 +1005,7 @@ button:hover {
 
 .navbar-subcontainer {
   display: flex;
-  /* flex-direction: column; */
-  /* margin-left: 2rem; */
-  /* margin-top: 2rem; */
-  justify-content: flex-end;
-  margin-right: 1rem;
-  margin-top: 1rem;
+  /* margin-right: 1rem; */
   gap: 3rem;
 }
 
@@ -1393,13 +1401,22 @@ button:hover {
 }
 
 .swiper-slide {
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  /* transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; */
+  paddin-bottom: 0rem !important;
 }
 
 .swiper-slide:hover {
-  cursor: pointer;
-  transform: scale(1.05);
-  box-shadow: 0px 0px 20px var(--black);
+  /* cursor: pointer; */
+  /* transform: scale(1.05); */
+  box-shadow: 0px 0px 0px transparent !important;
+}
+
+.swiper {
+  /* padding: 0rem 25rem !important; */
+}
+
+.mySwiper {
+  padding: 0rem 25rem !important;
 }
 
 #venue-img::before {
@@ -3775,33 +3792,7 @@ input[type="color"]::-webkit-color-swatch {
   padding-bottom: 1.5rem;
 }
 
-.swiper-pagination-bullet-active-next {
-  background-color: black !important;
-  height: 20px;
-  width: 20px;
-  opacity: 1;
-}
-
-.swiper-pagination-bullet-active {
-  background-color: black !important;
-  height: 20px;
-  width: 20px;
-  opacity: 1;
-}
-
-.swiper-pagination {
-  /* height: auto; */
-  /* width: 20px; */
-  transform: translateY(-50%);
-  top: 94% !important;
-  background-color: transparent;
-}
-
-.swiper-pagination-bullet {
-  background-color: black;
-  width: 10px !important;
-  height: 10px !important;
-}
+--swiper-pagination-color: #b19fff;
 
 .swiper-button-disabled {
   display: none !important;
@@ -6028,14 +6019,6 @@ input[type="color"]::-webkit-color-swatch {
   background-color: var(--black);
 }
 
-.upcoming-events-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin: 0rem 5.5rem;
-  margin-top: 1rem;
-}
-
 .upcoming-event-item {
   width: 100%;
   height: 100px;
@@ -7409,7 +7392,6 @@ input[type="color"]::-webkit-color-swatch {
   padding: 0.5rem;
 }
 
-
 .merge-tickets-child-0 {
   position: absolute;
   left: 0%;
@@ -7438,3 +7420,128 @@ input[type="color"]::-webkit-color-swatch {
   background-color: grey;
 }
 
+.nav-btn {
+  background-color: #d4af37;
+  color: black;
+  padding: 1.5rem;
+  border-radius: 40px;
+}
+
+.logo-new-spotmeup {
+  padding-left: 1rem;
+}
+
+.upcoming-events-container {
+  width: 100%;
+}
+
+.upcoming-events-title {
+  display: flex;
+  width: 90%;
+  justify-content: space-between;
+  margin: 0 auto;
+  margin-bottom: 1rem;
+}
+
+.browse-events {
+  font-size: 13px;
+  font-weight: 400;
+  text-decoration: underline;
+  color: #b19fff;
+  cursor: pointer;
+}
+
+.browse-events:hover {
+  opacity: 0.7;
+}
+
+.find-your-spot {
+  font-weight: 400;
+  font-size: 30px;
+}
+
+.upcoming-events-infite {
+  display: flex;
+  width: 90%;
+  justify-content: space-between;
+  margin: 0 auto;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 1rem;
+}
+
+.upcoming-events-infite > div {
+  height: 666px;
+  width: 342px;
+  background-color: white;
+  flex-shrink: 0;
+}
+
+.margin-top {
+  margin-top: 1rem;
+}
+
+.locations-infite {
+  display: flex;
+  width: 90%;
+  justify-content: space-between;
+  margin: 0 auto;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 1rem;
+}
+
+.locations-infite > img {
+  height: 226px;
+  width: 342px;
+  background-color: white;
+  flex-shrink: 0;
+  border-radius: 15px;
+}
+
+.footer-divider {
+  display: flex;
+  width: 90%;
+  justify-content: space-between;
+  margin: 1rem auto;
+  align-items: center;
+}
+
+.footer-links-divider {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer-links-divider > h1 {
+  font-weight: 400;
+  font-size: 20px;
+}
+
+.footer-links-divider > h1:hover {
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.light-text {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.light-text > h1 {
+  font-weight: 200;
+}
+
+.footer-terms-service {
+  cursor: pointer;
+}
+
+.footer-terms-service:hover {
+  opacity: 0.7;
+}
+
+.login-signup-navtext {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  color: var(--white)
+}

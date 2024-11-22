@@ -1,4 +1,5 @@
 import React from "react";
+import EventCard from "../../assets/icons/event-card.svg"
 
 const UpcomingEvents = ({ events }) => {
   const formatDate = (dateString) => {
@@ -38,43 +39,18 @@ const UpcomingEvents = ({ events }) => {
 
   return (
     <div className="upcoming-events-container">
-      {filteredEvents && filteredEvents?.length > 0 ? (
-        filteredEvents
-          .sort((a, b) => new Date(a.date) - new Date(b.date))
-          .map((event) => (
-            <div key={event._id} className="upcoming-event-item">
-              <div
-                style={{
-                  backgroundImage: `url(${
-                    event.images &&
-                    event.images.length > 0 &&
-                    event.images[0] !== ""
-                      ? event.images[0]
-                      : "/no-image.jpg" // URL de la imagen de respaldo
-                  })`,
-                  backgroundSize: "100%",
-                  backgroundRepeat: "no-repeat",
-                  width: "85px",
-                  height: "100px",
-                  borderTopLeftRadius: "10px",
-                  borderBottomLeftRadius: "10px",
-                }}
-                className="event-image"
-              ></div>
-              <div className="upcoming-event-fields">
-                <h1 className="">{event?.name}</h1>
-                <h1 className="">
-                  {event?.address?.state}, {event?.address?.city}
-                </h1>
+      <div className="upcoming-events-title">
+        <h1 className="find-your-spot">Find your Spot</h1>
+        <h1 className="browse-events">BROWSE EVENTS</h1>
+      </div>
 
-                <h1 className="">{formatDate(event?.date)}</h1>
-                <h1 className="">{formatTime(event?.time)}</h1>
-              </div>
-            </div>
-          ))
-      ) : (
-        <p>No upcoming events</p>
-      )}
+      <div className="upcoming-events-infite">
+        <img src={EventCard} alt="Event Card" />
+        <img src={EventCard} alt="Event Card" />
+        <img src={EventCard} alt="Event Card" />
+        <img src={EventCard} alt="Event Card" />
+        <img src={EventCard} alt="Event Card" />
+      </div>
     </div>
   );
 };
