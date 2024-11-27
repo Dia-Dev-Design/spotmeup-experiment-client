@@ -1,7 +1,11 @@
 import React from "react";
-import EventCard from "../../assets/icons/event-card.svg"
+import EventCard from "../../assets/icons/event-card.svg";
+import locationOne from "../../assets/icons/location-1.png";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const UpcomingEvents = ({ events }) => {
+  const navigate = useNavigate();
+
   const formatDate = (dateString) => {
     const eventDate = new Date(dateString);
     const today = new Date();
@@ -37,6 +41,9 @@ const UpcomingEvents = ({ events }) => {
     return eventDate.setHours(0, 0, 0, 0) >= today.setHours(0, 0, 0, 0);
   });
 
+  // const handleChangePage = (eventId, index) => {
+  //   navigate(`/event-details/${eventId}`);
+  // };
   return (
     <div className="upcoming-events-container">
       <div className="upcoming-events-title">
