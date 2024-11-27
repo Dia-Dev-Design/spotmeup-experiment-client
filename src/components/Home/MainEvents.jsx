@@ -10,6 +10,7 @@ import {
 } from "swiper/modules";
 import { useNavigate } from "react-router-dom";
 import "swiper/css/bundle";
+import arrows from "../../../public/LeftArrow.svg";
 
 const MainEvents = ({ events }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -72,78 +73,154 @@ const MainEvents = ({ events }) => {
   };
 
   return (
-    <Swiper
-      effect={"coverflow"}
-      grabCursor={true}
-      slidesPerView={"auto"}
-      centeredSlides={true}
-      coverflowEffect={{
-        rotate: 50,
-        stretch: 0,
-        depth: 150,
-        modifier: 1,
-        slideShadows: true,
-      }}
-      className="mySwiper"
-      pagination={{
-        clickable: true,
-        renderCustom: (swiper, current, total) => {
-          let bullets = "";
-          for (let i = 1; i <= total; i++) {
-            bullets += `
-              <span class="${i === current ? "custom-bullet active" : "custom-bullet"}">
+    <>
+      <div className="h-[536px] flex-col justify-start items-center gap-8 inline-flex">
+        <div className="w-[1300px] h-[480px] relative" />
+        <div className="w-[188px] justify-between items-center inline-flex">
+          <div
+            style={{
+              backgroundImage: `url(${arrows})`,
+              backgroundSize: "100%",
+              alignSelf: "center",
+              cursor: "pointer",
+              transform: "rotate(180deg)",
+            }}
+            className="w-6 h-6 relative   rounded-3xl "
+          />
+          <div className="rounded-3xl justify-start items-start gap-2 flex">
+            <div className="w-3 h-2 relative">
+              <div className="w-3 h-2 left-0 top-0 absolute bg-[#b09fff] rounded-[20px]" />
+            </div>
+             {
+                events &&
+                  events
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    .slice(0, 5)
+                    .map((event, index) => {
+                      return (
+                        <div className="w-3 h-2 relative" key={index}>
+                          <div className="w-2 h-2 left-0 top-0 absolute bg-[#efefef] rounded-[20px]" />
+                        </div>
+                      );
+                    })
+              }
+          </div>
+
+          <div
+            style={{
+              backgroundImage: `url(${arrows})`,
+              backgroundSize: "100%",
+              alignSelf: "center",
+              cursor: "pointer",
+            }}
+            className="w-6 h-6 relative rounded-3xl "
+          />
+        </div>
+      </div>
+
+      <Swiper
+        effect={"coverflow"}
+        grabCursor={true}
+        slidesPerView={"auto"}
+        centeredSlides={true}
+        coverflowEffect={{
+          rotate: 50,
+          stretch: 0,
+          depth: 150,
+          modifier: 1,
+          slideShadows: true,
+        }}
+        className="mySwiper"
+        pagination={{
+          clickable: true,
+          renderCustom: (swiper, current, total) => {
+            let bullets = "";
+            for (let i = 1; i <= total; i++) {
+              bullets += `
+              <span class="${
+                i === current ? "custom-bullet active" : "custom-bullet"
+              }">
                 ${i}
               </span>
             `;
-          }
-          return `<div class="custom-pagination">${bullets}</div>`;
-        },
-      }}
-      // pagination={true}
-      loop={true}
-      modules={[ A11y, EffectCoverflow, Pagination]}
-      onSlideChange={handleSlideChange}
-      onSwiper={(swiperInstance) => {
-        swiperRef.current = swiperInstance;
-      }}
-    >
-      {events &&
-        events
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .slice(0, 10)
-          .map((event, index) => (
-            <SwiperSlide
-              key={event._id}
-              onClick={() => handleChangePage(event._id, index)}
-              style={{
-                paddingBottom: "0rem",
-                borderRadius: "20px",
-              }}
-            >
-              <img
-                src={event?.images[0] ? event?.images[0] : "/no-image.jpg"}
-                alt="event-logo"
+            }
+            return `<div class="custom-pagination">${bullets}</div>`;
+          },
+        }}
+        // pagination={true}
+        loop={true}
+        modules={[A11y, EffectCoverflow, Pagination]}
+        onSlideChange={handleSlideChange}
+        onSwiper={(swiperInstance) => {
+          swiperRef.current = swiperInstance;
+        }}
+      >
+        {events &&
+          events
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 10)
+            .map((event, index) => (
+              <SwiperSlide
+                key={event._id}
+                onClick={() => handleChangePage(event._id, index)}
                 style={{
-                  width: "100%",
-                  height: "300px",
-                  objectFit: "cover",
+                  paddingBottom: "0rem",
                   borderRadius: "20px",
                 }}
-              />
+              >
+                <img
+                  src={event?.images[0] ? event?.images[0] : "/no-image.jpg"}
+                  alt="event-logo"
+                  style={{
+                    width: "100%",
+                    height: "300px",
+                    objectFit: "cover",
+                    borderRadius: "20px",
+                  }}
+                />
 
-              {console.log(`Active Index ${activeIndex} - Index ${index}`)}
+                {/* {console.log(`Active Index ${activeIndex} - Index ${index}`)} */}
 
-              {/* {index === activeIndex && (
+                {/* {index === activeIndex && (
                 <>
                   <h1 style={{ color: "red", textAlign: "center" }}>
                     Este está activo
                   </h1>
                 </>
               )} */}
-            </SwiperSlide>
-          ))}
-    </Swiper>
+              </SwiperSlide>
+            ))}
+      </Swiper>
+    </>
   );
 };
 
 export default MainEvents;
+
+// {
+//   events &&
+//     events
+//       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+//       .slice(0, 10)
+//       .map((event, index) => {
+//         return (
+//           <div className="w-3 h-2 relative" key={index}>
+//             <div className="w-2 h-2 left-0 top-0 absolute bg-[#efefef] rounded-[20px]" />
+//           </div>
+//         );
+//       });
+// }
+
+// <div className="w-3 h-2 relative">
+//   <div
+//     style={{
+//       backgroundImage: `url(${arrows})`,
+//       backgroundSize: "100%",
+//       alignSelf: "center",
+//     }}
+//     className="
+//       w-6 h-6 relative
+//       rounded-3xl
+//       "
+//   />
+// </div>;
