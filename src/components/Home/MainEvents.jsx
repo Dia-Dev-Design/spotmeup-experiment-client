@@ -10,7 +10,7 @@ import {
 } from "swiper/modules";
 import { useNavigate } from "react-router-dom";
 import "swiper/css/bundle";
-import arrows from "../../../public/LeftArrow.svg";
+import arrows from "../../assets/icons/Arrows.svg";
 
 const MainEvents = ({ events }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -74,8 +74,76 @@ const MainEvents = ({ events }) => {
 
   return (
     <>
-      <div className="h-[536px] flex-col justify-start items-center gap-8 inline-flex">
+      <div style={{marginBottom: "10%"}} className="h-[536px] flex-col justify-start items-center gap-8 inline-flex">
         <div className="w-[1300px] h-[480px] relative" />
+
+        {events?.length ? (
+          <div style={{ width: "100%", height: "100%", position: "relative" }}>
+            <img
+              style={{
+                width: 400,
+                height: 400,
+                left: 900,
+                top: 40,
+                position: "absolute",
+                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
+                borderRadius: 24,
+              }}
+              src="https://via.placeholder.com/400x400"
+            />
+            <img
+              style={{
+                width: 400,
+                height: 400,
+                left: 0,
+                top: 40,
+                position: "absolute",
+                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
+                borderRadius: 24,
+              }}
+              src="https://via.placeholder.com/400x400"
+            />
+            <img
+              style={{
+                width: 440,
+                height: 440,
+                left: 160,
+                top: 20,
+                position: "absolute",
+                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
+                borderRadius: 24,
+              }}
+              src={events[0].images[0]}
+            />
+            <img
+              style={{
+                width: 440,
+                height: 440,
+                left: 700,
+                top: 20,
+                position: "absolute",
+                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
+                borderRadius: 24,
+              }}
+              src="https://via.placeholder.com/440x440"
+            />
+            <img
+              style={{
+                width: 480,
+                height: 480,
+                left: 410,
+                top: 0,
+                position: "absolute",
+                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
+                borderRadius: 24,
+              }}
+              src="https://via.placeholder.com/480x480"
+            />
+          </div>
+        ) : (
+          <div>No featured Events</div>
+        )}
+
         <div className="w-[188px] justify-between items-center inline-flex">
           <div
             style={{
@@ -88,22 +156,25 @@ const MainEvents = ({ events }) => {
             className="w-6 h-6 relative   rounded-3xl "
           />
           <div className="rounded-3xl justify-start items-start gap-2 flex">
-            <div className="w-3 h-2 relative">
-              <div className="w-3 h-2 left-0 top-0 absolute bg-[#b09fff] rounded-[20px]" />
-            </div>
-             {
-                events &&
-                  events
-                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                    .slice(0, 5)
-                    .map((event, index) => {
-                      return (
+            {events &&
+              events
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(0, 5)
+                .map((event, index) => {
+                  return (
+                    <>
+                      {index === 2 ? (
+                        <div className="w-3 h-2 relative" key={index}>
+                          <div className="w-3 h-2 left-0 top-0 absolute bg-[#b09fff] rounded-[20px]" />
+                        </div>
+                      ) : (
                         <div className="w-3 h-2 relative" key={index}>
                           <div className="w-2 h-2 left-0 top-0 absolute bg-[#efefef] rounded-[20px]" />
                         </div>
-                      );
-                    })
-              }
+                      )}
+                    </>
+                  );
+                })}
           </div>
 
           <div
@@ -117,6 +188,8 @@ const MainEvents = ({ events }) => {
           />
         </div>
       </div>
+
+      {/*       
 
       <Swiper
         effect={"coverflow"}
@@ -179,18 +252,20 @@ const MainEvents = ({ events }) => {
                   }}
                 />
 
-                {/* {console.log(`Active Index ${activeIndex} - Index ${index}`)} */}
+                {console.log(`Active Index ${activeIndex} - Index ${index}`)}
 
-                {/* {index === activeIndex && (
+                {index === activeIndex && (
                 <>
                   <h1 style={{ color: "red", textAlign: "center" }}>
                     Este está activo
                   </h1>
                 </>
-              )} */}
+              )}
               </SwiperSlide>
             ))}
       </Swiper>
+
+ */}
     </>
   );
 };
