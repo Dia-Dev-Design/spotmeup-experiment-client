@@ -396,11 +396,6 @@ button:hover {
   font-size: 10px;
 }
 
-@media (max-width: 760px) {
-  .signup-page {
-    /* flex-direction: column; */
-  }
-}
 
 /* Home Page */
 
@@ -838,14 +833,7 @@ button:hover {
     width: 200px;
   }
 
-  #profileTabicon {
-    /* left: 37%;
-      top: 65%; */
-  }
 
-  #myprofiletab-container {
-    /* margin-top: 18%; */
-  }
 
   #profileform-body {
     margin-bottom: 2rem;
@@ -1016,13 +1004,7 @@ button:hover {
   margin-right: auto;
 }
 
-.nav-user-img {
-  /* background-image: url(/profile-picture.png);
-  height: 50px;
-  width: 50px;
-  background-size: 100%;
-  background-repeat: no-repeat; */
-}
+
 
 @keyframes moveup {
   0% {
@@ -1067,10 +1049,7 @@ button:hover {
   background-color: var(--black);
 }
 
-.myevents-container {
-  /* display: grid; */
-  /* grid-template-columns: 2fr 8fr; */
-}
+
 
 .sub-navbar-container > a {
   text-decoration: none;
@@ -1402,7 +1381,7 @@ button:hover {
 
 .swiper-slide {
   /* transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; */
-  paddin-bottom: 0rem !important;
+  padding-bottom: 0rem !important;
 }
 
 .swiper-slide:hover {
@@ -1411,9 +1390,7 @@ button:hover {
   box-shadow: 0px 0px 0px transparent !important;
 }
 
-.swiper {
-  /* padding: 0rem 25rem !important; */
-}
+
 
 .mySwiper {
   padding: 0rem 25rem !important;
@@ -1574,10 +1551,7 @@ button:hover {
   height: 100%;
 }
 
-.admin-venue-detail-full-container {
-  /* display: grid;
-  grid-template-columns: 2fr 8fr; */
-}
+
 
 .admin-icon-close {
   margin-left: 1rem;
@@ -2422,6 +2396,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .delete-shape-form {
@@ -2776,6 +2751,7 @@ input[type="number"] {
 .range {
   width: 90%;
   -webkit-appearance: none;
+  appearance: none;
   color: var(--yellow);
   background-color: transparent;
   border-radius: 20px;
@@ -2840,6 +2816,7 @@ input[type="range"]::-moz-range-thumb {
   border: none;
   outline: none;
   -webkit-appearance: none;
+  appearance: none;
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper {
@@ -2864,6 +2841,7 @@ input[type="color"]::-webkit-color-swatch {
   background-color: white;
   color: black;
   -moz-appearance: number;
+  appearance: number;
   border-radius: 2px;
   padding: 0.5rem 0rem;
 }
@@ -3923,6 +3901,7 @@ input[type="color"]::-webkit-color-swatch {
   align-items: center;
   cursor: pointer;
   font-size: var(--size);
+  -webkit-user-select: none;
   user-select: none;
   fill: var(--color);
   position: absolute;
@@ -4021,6 +4000,7 @@ input[type="color"]::-webkit-color-swatch {
 .table-range {
   width: 90%;
   -webkit-appearance: none;
+  appearance: none;
   color: var(--green);
   background-color: transparent;
   border-radius: 20px;
@@ -4109,6 +4089,7 @@ input[type="color"]::-webkit-color-swatch {
 .table-range {
   width: 90%;
   -webkit-appearance: none;
+  appearance: none;
   color: var(--green);
   background-color: transparent;
   border-radius: 20px;
@@ -4952,8 +4933,8 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .up {
-  transform: rotate(-135deg);
   -webkit-transform: rotate(-135deg);
+  transform: rotate(-135deg);
 }
 
 .down {
@@ -5215,9 +5196,7 @@ input[type="color"]::-webkit-color-swatch {
   margin-left: 0.8rem;
 }
 
-.dashboard-nomargin {
-  /* margin: 0; */
-}
+
 
 .dashboard-total-container {
   color: black;
@@ -6331,8 +6310,7 @@ input[type="color"]::-webkit-color-swatch {
     z-index: 2;
   }
 
-  .logos-parent {
-  }
+
   .logos-container {
     /* position: absolute;
     top: 109%;
@@ -6492,14 +6470,7 @@ input[type="color"]::-webkit-color-swatch {
   width: 100%;
 }
 
-.buy-tickets-cart {
-  /* position: absolute; */
-  /* transform: translate(-50%, -50%); */
-  /* left: 67.5%; */
-  /* top: 2%; */
-  /* margin-right: 2rem; */
-  /* position: fixed; */
-}
+
 
 .cart-container {
   display: flex;
