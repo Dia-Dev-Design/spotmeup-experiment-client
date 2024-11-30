@@ -74,23 +74,14 @@ const MainEvents = ({ events }) => {
 
   return (
     <>
-      <div style={{marginBottom: "10%"}} className="h-[536px] flex-col justify-start items-center gap-8 inline-flex">
+      <div
+        style={{ marginBottom: "10%", marginLeft: "10%" }}
+        className="h-[536px] flex-col justify-start items-center gap-8 inline-flex"
+      >
         <div className="w-[1300px] h-[480px] relative" />
 
         {events?.length ? (
           <div style={{ width: "100%", height: "100%", position: "relative" }}>
-            <img
-              style={{
-                width: 400,
-                height: 400,
-                left: 900,
-                top: 40,
-                position: "absolute",
-                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
-                borderRadius: 24,
-              }}
-              src="https://via.placeholder.com/400x400"
-            />
             <img
               style={{
                 width: 400,
@@ -100,44 +91,65 @@ const MainEvents = ({ events }) => {
                 position: "absolute",
                 boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
                 borderRadius: 24,
+                zIndex: "10",
               }}
+              className="-skew-y-12"
+              src="https://via.placeholder.com/400x400"
+            />
+            <img
+              style={{
+                width: 400,
+                height: 400,
+                left: 160,
+                top: 20,
+                position: "absolute",
+                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
+                borderRadius: 24,
+                zIndex: "80",
+              }}
+              className="-skew-y-6"
               src="https://via.placeholder.com/400x400"
             />
             <img
               style={{
                 width: 440,
                 height: 440,
-                left: 160,
-                top: 20,
-                position: "absolute",
-                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
-                borderRadius: 24,
-              }}
-              src={events[0].images[0]}
-            />
-            <img
-              style={{
-                width: 440,
-                height: 440,
-                left: 700,
-                top: 20,
-                position: "absolute",
-                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
-                borderRadius: 24,
-              }}
-              src="https://via.placeholder.com/440x440"
-            />
-            <img
-              style={{
-                width: 480,
-                height: 480,
                 left: 410,
                 top: 0,
                 position: "absolute",
                 boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
                 borderRadius: 24,
+                zIndex: "99",
               }}
-              src="https://via.placeholder.com/480x480"
+              src={events[0].images[0]}
+            />
+            <img
+              style={{
+                width: 400,
+                height: 400,
+                left: 700,
+                top: 20,
+                position: "absolute",
+                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
+                borderRadius: 24,
+                zIndex: "80",
+              }}
+              className="skew-y-6"
+              src="https://via.placeholder.com/400x400"
+            />
+            <img
+              style={{
+                width: 400,
+                height: 400,
+                left: 900,
+                top: 40,
+                position: "absolute",
+                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
+                borderRadius: 24,
+                zIndex: "70",
+              }}
+              className="skew-y-12"
+              src="https://via.placeholder.com/400x400"
             />
           </div>
         ) : (
