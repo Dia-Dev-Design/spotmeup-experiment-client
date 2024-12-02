@@ -40,7 +40,6 @@ const Home = () => {
       <LocateSpot events={events} />
 
       <Footer />
-      
     </div>
   );
 };

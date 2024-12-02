@@ -1,313 +1,209 @@
-import React, { useEffect, useState, useRef } from "react";
-import { findAllEvents } from "../../services/events.service";
-import { Swiper, SwiperSlide } from "swiper/react";
-import {
-  Navigation,
-  Pagination,
-  Scrollbar,
-  A11y,
-  EffectCoverflow,
-} from "swiper/modules";
+import React, { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import "swiper/css/bundle";
-import arrows from "../../assets/icons/Arrows.svg";
 
 const MainEvents = ({ events }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const swiperRef = useRef(null);
-
-  const handleSlideChange = () => {
-    const currentActiveIndex = swiperRef?.current?.realIndex;
-
-    setActiveIndex(currentActiveIndex);
-  };
-
-  const handleNextSlide = () => {
-    swiperRef.current?.slideNext();
-  };
-
-  const handlePrevSlide = () => {
-    swiperRef.current?.slidePrev();
-  };
+  const getMiddleIndex = () => Math.floor((events?.length || 0) / 2);
+  const [currentIndex, setCurrentIndex] = useState(getMiddleIndex());
   const navigate = useNavigate();
-  const formatDate = (dateString) => {
-    const eventDate = new Date(dateString);
-    const today = new Date();
-    const differenceInTime =
-      eventDate.setHours(0, 0, 0, 0) - today.setHours(0, 0, 0, 0); // Ignore time part
-    const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
 
-    if (differenceInDays === 0) {
-      return "Hoy";
-    } else if (differenceInDays === 1) {
-      return "Mañana";
-    } else if (differenceInDays > 1 && differenceInDays < 7) {
-      return `Este ${eventDate.toLocaleString("es-ES", { weekday: "long" })}`;
-    } else {
-      return new Intl.DateTimeFormat("es-ES", {
-        month: "short",
-        day: "2-digit",
-        year: "numeric",
-      }).format(eventDate);
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === (events?.length || 0) - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? (events?.length || 0) - 1 : prevIndex - 1
+    );
+  };
+
+  const normalizeIndex = (index, length) => {
+    if (index < 0) return length - 1;
+    if (index >= length) return 0;
+    return index;
+  };
+
+  const getVisibleIndices = (currentIdx, totalLength) => {
+    const indices = [];
+    // Get 2 cards before and 2 cards after the current card
+    for (let i = -2; i <= 2; i++) {
+      let index = currentIdx + i;
+      // // Handle circular rotation. Normalize the index to create infinite rotation
+      while (index < 0) index += totalLength;
+      while (index >= totalLength) index -= totalLength;
+      indices.push(index);
     }
+    return indices;
   };
 
-  const filteredEvents = events?.filter((event) => {
-    const eventDate = new Date(event.date);
-    const today = new Date();
-    return eventDate.setHours(0, 0, 0, 0) >= today.setHours(0, 0, 0, 0);
-  });
+  const getCardStyle = (visiblePosition) => {
+    let translateX = 0;
+    let rotateY = 0;
+    let scale = 1;
+    let opacity = 1;
+    let zIndex = 5;
 
-  const formatTime = (timeString) => {
-    const [hours, minutes] = timeString.split(":");
-    let hours12 = parseInt(hours, 10);
-    const period = hours12 >= 12 ? "PM" : "AM";
-    hours12 = hours12 % 12 || 12;
-    return `${hours12}:${minutes} ${period}`;
+    switch (visiblePosition) {
+      case -2: // Leftmost card
+        translateX = -400;
+        rotateY = 45; // Rotate right side toward viewer
+        scale = 0.8; // Reduce size
+        opacity = 0.6; // Partially fade out
+        zIndex = 1; // Place behind other cards
+        break;
+      case -1: // Left card
+        translateX = -200;
+        rotateY = 25; // Slight rotation
+        scale = 0.9;
+        opacity = 0.8;
+        zIndex = 2;
+        break;
+      case 0: // Center card
+        translateX = 0;
+        rotateY = 0;
+        scale = 1;
+        opacity = 1;
+        zIndex = 5;
+        break;
+      case 1: // Right card
+        translateX = 200;
+        rotateY = -25;
+        scale = 0.9;
+        opacity = 0.8;
+        zIndex = 2;
+        break;
+      case 2: // Rightmost card
+        translateX = 400;
+        rotateY = -45;
+        scale = 0.8;
+        opacity = 0.6;
+        zIndex = 1;
+        break;
+      default:
+        return {
+          opacity: 0,
+          visibility: "hidden",
+          transform: "scale(0.8)",
+          zIndex: 0,
+        };
+    }
+
+    return {
+      transform: `perspective(1000px) translateX(${translateX}px) rotateY(${rotateY}deg) scale(${scale})`,
+      opacity,
+      zIndex,
+      transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+    };
   };
+
+  useEffect(() => {
+    if (events?.length) {
+      const timer = setInterval(nextSlide, 5000);
+      return () => clearInterval(timer);
+    }
+  }, [events]);
 
   const handleChangePage = (eventId, index) => {
-    if (activeIndex === index) {
+    if (currentIndex === index) {
       navigate(`/event-details/${eventId}`);
     }
   };
 
+  if (!events?.length) {
+    return (
+      <div className="flex items-center justify-center h-[900px] bg-gray-900 text-white">
+        <p>No featured Events</p>
+      </div>
+    );
+  }
+
+  const visibleIndices = getVisibleIndices(currentIndex, events.length);
+
   return (
-    <>
-      <div
-        style={{ marginBottom: "10%", marginLeft: "10%" }}
-        className="h-[536px] flex-col justify-start items-center gap-8 inline-flex"
-      >
-        <div className="w-[1300px] h-[480px] relative" />
-
-        {events?.length ? (
-          <div style={{ width: "100%", height: "100%", position: "relative" }}>
-            <img
-              style={{
-                width: 400,
-                height: 400,
-                left: 0,
-                top: 40,
-                position: "absolute",
-                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
-                borderRadius: 24,
-                zIndex: "10",
-              }}
-              className="-skew-y-12"
-              src="https://via.placeholder.com/400x400"
-            />
-            <img
-              style={{
-                width: 400,
-                height: 400,
-                left: 160,
-                top: 20,
-                position: "absolute",
-                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
-                borderRadius: 24,
-                zIndex: "80",
-              }}
-              className="-skew-y-6"
-              src="https://via.placeholder.com/400x400"
-            />
-            <img
-              style={{
-                width: 440,
-                height: 440,
-                left: 410,
-                top: 0,
-                position: "absolute",
-                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
-                borderRadius: 24,
-                zIndex: "99",
-              }}
-              src={events[0].images[0]}
-            />
-            <img
-              style={{
-                width: 400,
-                height: 400,
-                left: 700,
-                top: 20,
-                position: "absolute",
-                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
-                borderRadius: 24,
-                zIndex: "80",
-              }}
-              className="skew-y-6"
-              src="https://via.placeholder.com/400x400"
-            />
-            <img
-              style={{
-                width: 400,
-                height: 400,
-                left: 900,
-                top: 40,
-                position: "absolute",
-                boxShadow: "0px 2px 8px rgba(255, 255, 255, 0.50)",
-                borderRadius: 24,
-                zIndex: "70",
-              }}
-              className="skew-y-12"
-              src="https://via.placeholder.com/400x400"
-            />
-          </div>
-        ) : (
-          <div>No featured Events</div>
-        )}
-
-        <div className="w-[188px] justify-between items-center inline-flex">
-          <div
-            style={{
-              backgroundImage: `url(${arrows})`,
-              backgroundSize: "100%",
-              alignSelf: "center",
-              cursor: "pointer",
-              transform: "rotate(180deg)",
-            }}
-            className="w-6 h-6 relative   rounded-3xl "
-          />
-          <div className="rounded-3xl justify-start items-start gap-2 flex">
-            {events &&
-              events
-                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                .slice(0, 5)
-                .map((event, index) => {
-                  return (
-                    <>
-                      {index === 2 ? (
-                        <div className="w-3 h-2 relative" key={index}>
-                          <div className="w-3 h-2 left-0 top-0 absolute bg-[#b09fff] rounded-[20px]" />
-                        </div>
-                      ) : (
-                        <div className="w-3 h-2 relative" key={index}>
-                          <div className="w-2 h-2 left-0 top-0 absolute bg-[#efefef] rounded-[20px]" />
-                        </div>
-                      )}
-                    </>
-                  );
-                })}
-          </div>
-
-          <div
-            style={{
-              backgroundImage: `url(${arrows})`,
-              backgroundSize: "100%",
-              alignSelf: "center",
-              cursor: "pointer",
-            }}
-            className="w-6 h-6 relative rounded-3xl "
-          />
+    <div className="relative w-full max-w-7xl mx-auto h-[700px] bg-gray-900">
+      <div className="absolute left-1/2 top-[35%] -translate-x-1/2 -translate-y-1/2 w-full">
+        <div className="relative h-[500px] w-full max-w-6xl mx-auto flex items-center justify-center">
+          {visibleIndices.map((eventIndex, displayIndex) => (
+            <div
+              key={events[eventIndex]._id}
+              className="absolute w-[480px] h-[480px] hover:cursor-pointer"
+              style={getCardStyle(displayIndex - 2)} // -2 to 2 positions
+              onClick={() =>
+                handleChangePage(events[eventIndex]._id, eventIndex)
+              }
+            >
+              <div className="w-full h-full rounded-lg shadow-xl overflow-hidden hover:shadow-3xl transition-shadow duration-300">
+                <img
+                  src={
+                    events[eventIndex]?.images[0]
+                      ? events[eventIndex].images[0]
+                      : "/no-image.jpg"
+                  }
+                  alt={`Event ${eventIndex + 1}`}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/*       
-
-      <Swiper
-        effect={"coverflow"}
-        grabCursor={true}
-        slidesPerView={"auto"}
-        centeredSlides={true}
-        coverflowEffect={{
-          rotate: 50,
-          stretch: 0,
-          depth: 150,
-          modifier: 1,
-          slideShadows: true,
-        }}
-        className="mySwiper"
-        pagination={{
-          clickable: true,
-          renderCustom: (swiper, current, total) => {
-            let bullets = "";
-            for (let i = 1; i <= total; i++) {
-              bullets += `
-              <span class="${
-                i === current ? "custom-bullet active" : "custom-bullet"
-              }">
-                ${i}
-              </span>
-            `;
-            }
-            return `<div class="custom-pagination">${bullets}</div>`;
-          },
-        }}
-        // pagination={true}
-        loop={true}
-        modules={[A11y, EffectCoverflow, Pagination]}
-        onSlideChange={handleSlideChange}
-        onSwiper={(swiperInstance) => {
-          swiperRef.current = swiperInstance;
-        }}
+      <button
+        onClick={prevSlide}
+        className="absolute left-6 top-[35%] -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-colors z-20"
+        aria-label="Previous slide"
       >
-        {events &&
-          events
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0, 10)
-            .map((event, index) => (
-              <SwiperSlide
-                key={event._id}
-                onClick={() => handleChangePage(event._id, index)}
-                style={{
-                  paddingBottom: "0rem",
-                  borderRadius: "20px",
-                }}
-              >
-                <img
-                  src={event?.images[0] ? event?.images[0] : "/no-image.jpg"}
-                  alt="event-logo"
-                  style={{
-                    width: "100%",
-                    height: "300px",
-                    objectFit: "cover",
-                    borderRadius: "20px",
-                  }}
-                />
+        <ChevronLeft size={24} />
+      </button>
+      <button
+        onClick={nextSlide}
+        className="absolute right-6 top-[35%] -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/75 transition-colors z-20"
+        aria-label="Next slide"
+      >
+        <ChevronRight size={24} />
+      </button>
 
-                {console.log(`Active Index ${activeIndex} - Index ${index}`)}
+      <div
+        className="absolute top-[72%] left-1/2 transform -translate-x-1/2 flex space-x-2 z-20"
+        role="tablist"
+      >
+        {events.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`w-2 h-2 rounded-full transition-colors ${
+              index === currentIndex ? "bg-white" : "bg-white/50"
+            }`}
+            role="tab"
+            aria-selected={index === currentIndex}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
 
-                {index === activeIndex && (
-                <>
-                  <h1 style={{ color: "red", textAlign: "center" }}>
-                    Este está activo
-                  </h1>
-                </>
-              )}
-              </SwiperSlide>
-            ))}
-      </Swiper>
-
- */}
-    </>
+      <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gray-800 p-8">
+        {events[currentIndex] && (
+          <div className="max-w-2xl mx-auto text-white text-center">
+            <h2 className="text-3xl font-bold mb-4">
+              {events[currentIndex].name}
+            </h2>
+            <p className="text-lg mb-6">{events[currentIndex].date} • {events[currentIndex].time} </p>
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold transition-colors"
+              onClick={() =>
+                navigate(`/event-details/${events[currentIndex]._id}`)
+              }
+            >
+              Reserve Now
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
 export default MainEvents;
-
-// {
-//   events &&
-//     events
-//       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-//       .slice(0, 10)
-//       .map((event, index) => {
-//         return (
-//           <div className="w-3 h-2 relative" key={index}>
-//             <div className="w-2 h-2 left-0 top-0 absolute bg-[#efefef] rounded-[20px]" />
-//           </div>
-//         );
-//       });
-// }
-
-// <div className="w-3 h-2 relative">
-//   <div
-//     style={{
-//       backgroundImage: `url(${arrows})`,
-//       backgroundSize: "100%",
-//       alignSelf: "center",
-//     }}
-//     className="
-//       w-6 h-6 relative
-//       rounded-3xl
-//       "
-//   />
-// </div>;
