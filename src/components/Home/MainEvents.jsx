@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -19,11 +19,7 @@ const MainEvents = ({ events }) => {
     );
   };
 
-  const normalizeIndex = (index, length) => {
-    if (index < 0) return length - 1;
-    if (index >= length) return 0;
-    return index;
-  };
+
 
   const getVisibleIndices = (currentIdx, totalLength) => {
     const indices = [];
@@ -98,6 +94,40 @@ const MainEvents = ({ events }) => {
     };
   };
 
+  const getDotStyle = (visiblePosition) => {
+    let scale = 1;
+    let opacity = 1;
+
+    switch (visiblePosition) {
+      case -2:
+      case 2:
+        scale = 0.6;
+        opacity = 0.4;
+        break;
+      case -1:
+      case 1:
+        scale = 0.8;
+        opacity = 0.6;
+        break;
+      case 0:
+        scale = 1;
+        opacity = 1;
+        break;
+      default:
+        return {
+          opacity: 0,
+          visibility: "hidden",
+          transform: "scale(0)",
+        };
+    }
+
+    return {
+      transform: `scale(${scale})`,
+      opacity,
+      transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+    };
+  };
+
   useEffect(() => {
     if (events?.length) {
       const timer = setInterval(nextSlide, 5000);
@@ -113,7 +143,7 @@ const MainEvents = ({ events }) => {
 
   if (!events?.length) {
     return (
-      <div className="flex items-center justify-center h-[900px] bg-gray-900 text-white">
+      <div className="flex items-center justify-center h-[900px] bg-black text-white">
         <p>No featured Events</p>
       </div>
     );
@@ -122,7 +152,7 @@ const MainEvents = ({ events }) => {
   const visibleIndices = getVisibleIndices(currentIndex, events.length);
 
   return (
-    <div className="relative w-full max-w-7xl mx-auto h-[700px] bg-gray-900">
+    <div className="relative w-full max-w-7xl mx-auto h-[700px] bg-black">
       <div className="absolute left-1/2 top-[35%] -translate-x-1/2 -translate-y-1/2 w-full">
         <div className="relative h-[500px] w-full max-w-6xl mx-auto flex items-center justify-center">
           {visibleIndices.map((eventIndex, displayIndex) => (
@@ -167,16 +197,15 @@ const MainEvents = ({ events }) => {
       </button>
 
       <div
-        className="absolute top-[72%] left-1/2 transform -translate-x-1/2 flex space-x-2 z-20"
+        className="absolute top-[72%] left-1/2 transform -translate-x-1/2 flex space-x-4 z-20"
         role="tablist"
       >
-        {events.map((_, index) => (
+        {visibleIndices.map((index, displayIndex) => (
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-2 h-2 rounded-full transition-colors ${
-              index === currentIndex ? "bg-white" : "bg-white/50"
-            }`}
+            className="w-3 h-3 rounded-full bg-white transition-all duration-300"
+            style={getDotStyle(displayIndex - 2)}
             role="tab"
             aria-selected={index === currentIndex}
             aria-label={`Go to slide ${index + 1}`}
@@ -184,15 +213,17 @@ const MainEvents = ({ events }) => {
         ))}
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gray-800 p-8">
+      <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-black p-8">
         {events[currentIndex] && (
           <div className="max-w-2xl mx-auto text-white text-center">
             <h2 className="text-3xl font-bold mb-4">
               {events[currentIndex].name}
             </h2>
-            <p className="text-lg mb-6">{events[currentIndex].date} • {events[currentIndex].time} </p>
+            <p className="text-lg mb-6">
+              {events[currentIndex].date} • {events[currentIndex].time}{" "}
+            </p>
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold transition-colors"
+              className="bg-yellow-600 hover:bg-yellow-700 text-white px-8 py-3 rounded-full font-semibold transition-colors"
               onClick={() =>
                 navigate(`/event-details/${events[currentIndex]._id}`)
               }
