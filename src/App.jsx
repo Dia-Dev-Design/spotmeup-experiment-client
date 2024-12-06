@@ -22,6 +22,7 @@ const BDTickets = lazy(() => import("./components/BreakDown/BDTickets"));
 const EventBreakDown = lazy(() => import("./pages/EventBreakDown.jsx"));
 
 function App() {
+
   const getToken = () => {
     return localStorage.getItem("authToken");
   };
