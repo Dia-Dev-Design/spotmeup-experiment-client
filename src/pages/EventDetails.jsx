@@ -7,9 +7,9 @@ import { AuthContext } from "../context/auth.context";
 
 import calendarIcon from "../assets/calendar_icon.svg";
 import destinationMarker from "../assets/destination_marker.svg";
-import timeIcon from "../../dist/assets/Timer.svg";
-import wineBottle from "../../dist/assets/wine-bottle.svg";
-import tableSelection from "../../dist/assets/table-selection.svg";
+import timeIcon from '../assets/AgeIndicator.svg';
+import wineBottle from "../assets/WineBottle.svg";
+import tableSelection from "../assets/TableAvailibility.svg";
 import UpcomingEvents from "../components/Home/UpcomingEvents";
 import Footer from "../components/Home/Footer";
 
