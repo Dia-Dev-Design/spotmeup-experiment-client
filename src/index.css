@@ -2486,7 +2486,7 @@ input[type="number"] {
 }
 
 .justify-center {
-  background-image: url(/center-indent.png);
+  /* background-image: url(/center-indent.png);
   background-size: 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -2496,7 +2496,7 @@ input[type="number"] {
   background-color: transparent;
   cursor: pointer;
   box-shadow: none;
-  margin-top: 0.5rem;
+  margin-top: 0.5rem; */
 }
 
 .justify-right {
@@ -2520,9 +2520,9 @@ input[type="number"] {
 }
 
 .justify-center:hover {
-  width: 34px;
+  /* width: 34px;
   height: 34px;
-  box-shadow: none;
+  box-shadow: none; */
 }
 
 .justify-right:hover {
@@ -6051,11 +6051,12 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .event-details-grid {
-  margin: 1rem;
+  margin-top: 1rem;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.1fr;
   gap: 1rem;
-  background-color: #282828;
+  background-color: #1e1e1e;
+  padding: 1rem;
 }
 
 .event-details-title {
@@ -6066,8 +6067,8 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .event-details-fields {
-  background-color: #282828;
   padding: 1rem;
+  padding-top: 0rem;
   height: 34%;
   /* position: absolute; */
   /* transform: translate(-50%, -50%); */
@@ -6076,7 +6077,7 @@ input[type="color"]::-webkit-color-swatch {
   /* width: 30%; */
 }
 
-.event-venue-name{
+.event-venue-name {
   color: white;
   font-weight: 400;
   margin-bottom: 1rem;
@@ -6192,7 +6193,8 @@ input[type="color"]::-webkit-color-swatch {
     height: 270px;
   }
   .event-image-details {
-    height: 700px;
+    height: 500px;
+    width: 80%;
   }
   .become-promoter {
     display: none;
@@ -6274,6 +6276,7 @@ input[type="color"]::-webkit-color-swatch {
   .event-details-grid {
     display: block;
     background-color: #282828;
+    background-color: red !important;
   }
 
   .event-details-fields {
@@ -7480,7 +7483,7 @@ input[type="color"]::-webkit-color-swatch {
   display: flex;
   width: 90%;
   justify-content: space-between;
-  margin: 1rem auto;
+  margin: 1rem auto 0rem auto;
   align-items: center;
 }
 
@@ -7500,8 +7503,8 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .light-text {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .light-text > h1 {
@@ -7520,7 +7523,7 @@ input[type="color"]::-webkit-color-swatch {
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   font-weight: 400;
   font-size: 20px;
-  color: var(--white)
+  color: var(--white);
 }
 
 .dot-separator {
