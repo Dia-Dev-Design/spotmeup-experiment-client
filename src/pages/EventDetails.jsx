@@ -49,12 +49,16 @@ const EventDetails = () => {
       setTimeout(() => {
         setMessage(null);
       }, 3000);
-    } else if (!acceppted) {
-      setMessage("Term & Conditions Must Be Accepted");
-      setTimeout(() => {
-        setMessage(null);
-      }, 3000);
-    } else {
+    }
+    
+    // else if (!acceppted) {
+    //   setMessage("Term & Conditions Must Be Accepted");
+    //   setTimeout(() => {
+    //     setMessage(null);
+    //   }, 3000);
+    // } 
+    
+    else {
       navigate(`/event-tickets/${eventId}`);
     }
   };
@@ -308,7 +312,11 @@ const EventDetails = () => {
           <div className="w-[96%] h-[58px] px-4 bg-[#d4af37] rounded-[100px] items-center inline-flex justify-center">
             <div className="justify-start items-start flex">
               <div className="py-4 rounded-lg shadow justify-center items-center flex">
-                <div className="text-center text-black text-xl font-bold font-['Space Grotesk']">
+                <div
+                  className="text-center text-black text-xl font-bold font-['Space Grotesk']"
+                  onClick={() => moveToDetails(event?._id)}
+                  style={{ cursor: "pointer" }}
+                >
                   Buy Tickets
                 </div>
               </div>
