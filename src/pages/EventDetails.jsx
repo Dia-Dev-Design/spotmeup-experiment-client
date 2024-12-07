@@ -7,7 +7,11 @@ import { AuthContext } from "../context/auth.context";
 
 import calendarIcon from "../assets/calendar_icon.svg";
 import destinationMarker from "../assets/destination_marker.svg";
-import timeIcon from "../assets/time_icon.svg";
+import timeIcon from "../../dist/assets/Timer.svg";
+import wineBottle from "../../dist/assets/wine-bottle.svg";
+import tableSelection from "../../dist/assets/table-selection.svg";
+import UpcomingEvents from "../components/Home/UpcomingEvents";
+import Footer from "../components/Home/Footer";
 
 const EventDetails = () => {
   const param = useParams();
@@ -108,7 +112,7 @@ const EventDetails = () => {
             // width: "900px",
             // height: "1000px",
           }}
-          className="event-image-details"
+          className="event-image-details place-self-center"
         ></div>
 
         <div className="event-details-fields">
@@ -126,8 +130,51 @@ const EventDetails = () => {
               </div>
               <h1 className="event-venue-name">{event.venue.name}</h1>
               <h1 className="event-details-title">About Event</h1>
-              <h1 className="event-venue-name">{event.description}</h1>
+              <h1 className="event-venue-name">
+                Enjoy a night out with your friends with open bar, a line-up of
+                three DJs and many more other surprises. Don't miss out and come
+                enjoy this event!
+              </h1>
+              <div className="flex flex-col">
+                <div className="h-[43.08px] p-2 justify-start items-center gap-2 inline-flex">
+                  <div
+                    className="w-[26px] h-[27.08px] relative"
+                    style={{ backgroundImage: `url(${timeIcon})` }}
+                  />
+                  <div className="grow shrink basis-0 text-neutral-100 text-base font-normal font-['Archivo'] leading-tight">
+                    Age +21
+                  </div>
+                </div>
+
+                <div className="h-[43.08px] p-2 justify-start items-center gap-2 inline-flex">
+                  <div className="w-[26px] h-[27.08px] px-[5px] flex-col justify-center items-center inline-flex">
+                    <div
+                      className="w-4 h-8 relative flex-col justify-start items-start flex"
+                      style={{ backgroundImage: `url(${wineBottle})` }}
+                    />
+                  </div>
+                  <div className="grow shrink basis-0 text-neutral-100 text-base font-normal font-['Archivo'] leading-tight">
+                    Bottle Service Included
+                  </div>
+                </div>
+
+                <div className="h-[43.08px] p-2 justify-start items-center gap-2 inline-flex">
+                  <div className="w-[26px] h-[27.08px] pt-[3px] pb-[2.08px] flex-col justify-center items-center inline-flex">
+                    <div
+                      className="w-[26px] h-[22px] relative flex-col justify-start items-start flex"
+                      style={{ backgroundImage: `url(${tableSelection})` }}
+                    />
+                  </div>
+                  <div className="grow shrink basis-0 text-neutral-100 text-base font-normal font-['Archivo'] leading-tight">
+                    Table Selection Available
+                  </div>
+                </div>
+              </div>
+
               <h1 className="event-details-title">About Line Up</h1>
+              <h1 className="event-venue-name">
+                Music and beats by: Achez & Luka Berges
+              </h1>
               <h1 className="event-details-title">About Venue</h1>
               <h1 className="event-venue-name">
                 {event?.venue?.address?.city}, {event?.venue?.address?.state},{" "}
@@ -136,7 +183,7 @@ const EventDetails = () => {
             </div>
             <div className="event-details-btn-container"></div>
             {message && <h1 className="event-li-terms-red">{message}</h1>}
-            {isMobile && (
+            {/* {isMobile && (
               <button
                 className="event-details-btn"
                 onClick={() => moveToDetails(event._id)}
@@ -151,11 +198,11 @@ const EventDetails = () => {
               >
                 Buy Tickets
               </button>
-            )}
+            )} */}
           </div>
           <hr className="term-conditions-hr" />
 
-          {!acceppted && (
+          {/* {!acceppted && (
             <div className="event-terms-conditions-container">
               <h1 className="event-li-title">Política De Reembolso</h1>
               <ul>
@@ -211,8 +258,67 @@ const EventDetails = () => {
               </label>
               <input type="checkbox" name="check" onClick={handleAccept} />
             </div>
-          )}
+          )} */}
         </div>
+
+        <div className="justify-self-center w-[80%]">
+          <h1>Purchase Policies</h1>
+          <h1>
+            Spot Me Up Assures your purchase is subject to our purchase and
+            refund <br />
+            policy. If any issue arises, please contact the event organizer.
+          </h1>
+        </div>
+
+        <div className="h-[100%] py-4 bg-[#282828] rounded-lg flex-col justify-center items-center gap-4 inline-flex">
+          <div className="self-stretch h-[158px] flex-col justify-start items-start gap-1 flex">
+            <div className="self-stretch h-[73px] px-4 flex-col justify-start items-start gap-2 flex">
+              <div className="text-white text-[28px] font-bold font-['Space Grotesk']">
+                Admission Tickets
+              </div>
+              <div className="self-stretch justify-start items-start gap-2 inline-flex">
+                <div className="grow shrink basis-0 h-[29px] justify-start items-start gap-2 flex">
+                  <div className="text-white text-[21px] font-normal font-['Archivo'] leading-[29.40px]">
+                    At
+                  </div>
+                  <div className="text-white text-[21px] font-normal font-['Archivo'] leading-[29.40px]">
+                    $1,150
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="self-stretch h-[81px] px-4 py-1 flex-col justify-start items-start flex">
+              <div className="self-stretch h-[73px] flex-col justify-start items-start gap-2 flex">
+                <div className="justify-start items-start gap-2 inline-flex">
+                  <div className="text-white text-[28px] font-bold font-['Space Grotesk']">
+                    Reserve Your Spots
+                  </div>
+                </div>
+                <div className="justify-start items-start gap-2 inline-flex">
+                  <div className="text-white text-[21px] font-normal font-['Archivo'] leading-[29.40px]">
+                    Starting at
+                  </div>
+                  <div className="text-white text-[21px] font-normal font-['Archivo'] leading-[29.40px]">
+                    $6,000
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-[96%] h-[58px] px-4 bg-[#d4af37] rounded-[100px] items-center inline-flex justify-center">
+            <div className="justify-start items-start flex">
+              <div className="py-4 rounded-lg shadow justify-center items-center flex">
+                <div className="text-center text-black text-xl font-bold font-['Space Grotesk']">
+                  Buy Tickets
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="bg-[#1e1e1e]">
+        <UpcomingEvents />
+        <Footer />
       </div>
     </div>
   );
