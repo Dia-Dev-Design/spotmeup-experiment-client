@@ -40,21 +40,24 @@ const MainEvents = ({ events }) => {
     let scale = 1;
     let opacity = 1;
     let zIndex = 5;
+    let filter = 'none';
 
     switch (visiblePosition) {
       case -2: // Leftmost card
         translateX = -400;
         rotateY = 45; // Rotate right side toward viewer
         scale = 0.8; // Reduce size
-        opacity = 0.6; // Partially fade out
+        // opacity = 0.6; // Partially fade out
         zIndex = 1; // Place behind other cards
+        filter = 'saturate(0) brightness(0.4)';
         break;
       case -1: // Left card
         translateX = -200;
         rotateY = 25; // Slight rotation
         scale = 0.9;
-        opacity = 0.8;
+        // opacity = 0.8;
         zIndex = 2;
+        filter = 'saturate(0.4) brightness(0.6)';
         break;
       case 0: // Center card
         translateX = 0;
@@ -67,15 +70,17 @@ const MainEvents = ({ events }) => {
         translateX = 200;
         rotateY = -25;
         scale = 0.9;
-        opacity = 0.8;
+        // opacity = 0.8;
         zIndex = 2;
+        filter = 'saturate(0.4) brightness(0.6)';
         break;
       case 2: // Rightmost card
         translateX = 400;
         rotateY = -45;
         scale = 0.8;
-        opacity = 0.6;
+        // opacity = 0.6;
         zIndex = 1;
+        filter = 'saturate(0) brightness(0.4)';
         break;
       default:
         return {
@@ -90,6 +95,7 @@ const MainEvents = ({ events }) => {
       transform: `perspective(1000px) translateX(${translateX}px) rotateY(${rotateY}deg) scale(${scale})`,
       opacity,
       zIndex,
+      filter,
       transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
     };
   };
@@ -156,27 +162,28 @@ const MainEvents = ({ events }) => {
       <div className="absolute left-1/2 top-[35%] -translate-x-1/2 -translate-y-1/2 w-full">
         <div className="relative h-[500px] w-full max-w-6xl mx-auto flex items-center justify-center">
           {visibleIndices.map((eventIndex, displayIndex) => (
-            <div
-              key={events[eventIndex]._id}
-              className="absolute w-[480px] h-[480px] hover:cursor-pointer"
-              style={getCardStyle(displayIndex - 2)} // -2 to 2 positions
-              onClick={() =>
-                handleChangePage(events[eventIndex]._id, eventIndex)
-              }
-            >
-              <div className="w-full h-full rounded-lg shadow-xl overflow-hidden hover:shadow-3xl transition-shadow duration-300">
-                <img
-                  src={
-                    events[eventIndex]?.images[0]
-                      ? events[eventIndex].images[0]
-                      : "/no-image.jpg"
-                  }
-                  alt={`Event ${eventIndex + 1}`}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
+              <div
+                key={events[eventIndex]._id}
+                className="absolute w-[480px] h-[480px] hover:cursor-pointer"
+                style={getCardStyle(displayIndex - 2)} // -2 to 2 positions
+                onClick={() =>
+                  handleChangePage(events[eventIndex]._id, eventIndex)
+                }
+              >
+                <div className="w-full h-full rounded-lg shadow-xl overflow-hidden hover:shadow-3xl transition-shadow duration-300">
+                  <img
+                    src={
+                      events[eventIndex]?.images[0]
+                        ? events[eventIndex].images[0]
+                        : "/no-image.jpg"
+                    }
+                    alt={`Event ${eventIndex + 1}`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
               </div>
-            </div>
+
           ))}
         </div>
       </div>
